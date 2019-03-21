@@ -73,8 +73,10 @@ class HomePageState extends State<HomePage> {
         children: <Widget>[
           newCarousel(banners),
           newButtonSection(),
+//          newMoneyInfoView(),
           newQuoteView(markets),
           newNiuRenView(context, niuPeoples),
+//          newInfoView(context)
         ],
       ),
     );
@@ -83,12 +85,12 @@ class HomePageState extends State<HomePage> {
   void getDataIndex(int request_type) {
     String url = "http://hq.sinajs.cn/list=s_sz399001,s_sz399006,s_sh000001";
     fetch(url).then((data) {
-      print("指数数据==》" + data);
+      // print("指数数据==》" + data);
       setState(() {
-        List<String> index_strs = data.split(";");
+        List<String> indexStrings = data.split(";");
         List<StockIndex> dataList = [];
-        for (int i = 0; i < index_strs.length - 1; i++) {
-          String str = index_strs[i];
+        for (int i = 0; i < indexStrings.length - 1; i++) {
+          String str = indexStrings[i];
           StockIndex stockIndex = new StockIndex();
           DealStockIndess(str, stockIndex);
           dataList.add(stockIndex);

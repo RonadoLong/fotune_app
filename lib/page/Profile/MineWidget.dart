@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/cell.dart';
+import 'package:fotune_app/page/Profile/BankPages.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/Profile/FundDetailsParentsPage.dart';
-import 'package:fotune_app/page/Profile/UserInfoPage.dart';
 import 'package:fotune_app/page/Strategy/StrategyPage.dart';
 import 'package:fotune_app/utils/ComstomBtnColumn.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
@@ -113,7 +113,7 @@ renderRow(
           break;
         case 2:
           Navigator.push(context,
-              new MaterialPageRoute(builder: (context) => new UserInfoPage()));
+              new MaterialPageRoute(builder: (context) => new BankPage()));
           break;
         case 3:
           Navigator.push(

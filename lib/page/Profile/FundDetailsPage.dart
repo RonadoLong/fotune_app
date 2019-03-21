@@ -119,6 +119,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
 
     return Container(
       color: Colors.white,
+      margin: EdgeInsets.only(bottom: 6),
       padding: EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

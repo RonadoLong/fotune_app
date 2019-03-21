@@ -25,8 +25,6 @@ class MinePageState extends State<MinePage> {
   List<String> titles = [
     "",
     "审核充值",
-//    "我的推广",
-//    "个人资料",
     "银行卡管理",
     "资金明细",
     "我的持仓",
@@ -34,8 +32,6 @@ class MinePageState extends State<MinePage> {
   ];
   List<IconData> icons = [
     Icons.assignment,
-//    Icons.all_inclusive,
-//    Icons.supervisor_account,
     Icons.ac_unit,
     Icons.access_alarm,
     Icons.account_circle,
