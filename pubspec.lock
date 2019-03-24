@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.2"
+  city_pickers:
+    dependency: "direct main"
+    description:
+      name: city_pickers
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.14"
   collection:
     dependency: transitive
     description:
@@ -158,6 +165,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.0"
+  flutter_picker:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "66987e0489ebafc7a16d51ae865105d41b427e2f"
+      url: "https://github.com/yangyxd/flutter_picker.git"
+    source: git
+    version: "1.0.9"
   flutter_refresh:
     dependency: "direct main"
     description:
@@ -275,6 +291,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.3+2"
+  lpinyin:
+    dependency: transitive
+    description:
+      name: lpinyin
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.7"
   matcher:
     dependency: transitive
     description:

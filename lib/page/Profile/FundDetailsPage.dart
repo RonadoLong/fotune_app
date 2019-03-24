@@ -7,6 +7,7 @@ import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Profile/model/FoundDetailResp.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:loadmore/loadmore.dart';
+import 'package:date_format/date_format.dart';
 
 class FundDetailsPage extends StatefulWidget {
   int index;
@@ -89,25 +90,6 @@ class FundDetailsPageState extends State<FundDetailsPage> {
           itemCount: dataList.length,
         ),
       );
-//      return new RefreshIndicator(
-//        backgroundColor: Colors.black12,
-//        onRefresh: (() => _handleRefresh()),
-//        color: UIData.refresh_color, //刷新控件的颜色
-//        child: ListView.separated(
-//          itemCount: dataList.length,
-//          itemBuilder: (context, index) {
-//            FoundDetails fd = dataList[index];
-//            return buildBodyCell(fd);
-//          },
-//          physics: const AlwaysScrollableScrollPhysics(),
-//          separatorBuilder: (context, idx) {
-//            return Container(
-//              height: 5,
-//              color: Color.fromARGB(50, 183, 187, 197),
-//            );
-//          },
-//        ),
-//      );
     }
   }
 
@@ -116,6 +98,9 @@ class FundDetailsPageState extends State<FundDetailsPage> {
     Color color = fd.changeAmount.toString().indexOf("-") != -1
         ? Colors.red
         : Colors.green;
+
+    DateTime dateTime = DateTime.parse(fd.createdAt);
+    String dateStr =  formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
 
     return Container(
       color: Colors.white,
@@ -147,7 +132,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
           Container(
             margin: EdgeInsets.only(top: 10),
             child: Text(
-              fd.createdAt,
+              dateStr,
               style: TextStyle(color: Colors.black38),
             ),
           )

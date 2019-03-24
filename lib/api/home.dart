@@ -1,5 +1,6 @@
 import 'package:fotune_app/api/HttpUtils.dart';
 import 'package:fotune_app/model/Market.dart';
+import 'package:fotune_app/model/Response.dart';
 import 'package:fotune_app/page/Home/model/NiuPeople.dart';
 
 GetInfoList(url) async {
@@ -14,9 +15,9 @@ Future<MarketResp> GetMarkets() async {
   return market;
 }
 
-Future<NiuPeopleResp> GetNiuPeoples() async {
+Future<Response> GetNiuPeoples() async {
   var url = "/home/niu";
-  var response = await Http().get(url);
-  var niuPeople = NiuPeopleResp.fromJson(response);
-  return niuPeople;
+  var res = await Http().get(url);
+  var reponse = Response.fromJson(res);
+  return reponse;
 }

@@ -3,17 +3,16 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/user.dart';
-import 'package:fotune_app/componets/cell.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/Profile/MineWidget.dart';
 import 'package:fotune_app/page/Profile/SettingPage.dart';
-import 'package:fotune_app/page/login/LoginPage.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 class MinePage extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() => new MinePageState();
 }
@@ -113,8 +112,7 @@ class MinePageState extends State<MinePage> {
           );
         },
         itemCount: titles.length,
-        itemBuilder: (context, i) => renderRow(i, userAvatar, name, amount,
-            titles, icons, context, _handleRefresh),
+        itemBuilder: (context, i) => renderRow(i, userAvatar, name, amount, user, titles, icons, context, _handleRefresh),
       ),
     );
 
@@ -149,7 +147,8 @@ class MinePageState extends State<MinePage> {
                     }
                   });
                 }
-              }),
+              }
+              ),
         ],
       ),
       body: listView,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/cell.dart';
+import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/Profile/BankPages.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/Profile/FundDetailsParentsPage.dart';
@@ -14,6 +15,7 @@ renderRow(
     String userAvatar,
     String userName,
     double price,
+    UserInfo user,
     List<String> cellTitle,
     List<IconData> cellIcon,
     BuildContext context,
@@ -106,6 +108,14 @@ renderRow(
     title: cellTitle[i],
     icon: Icon(cellIcon[i - 1]),
     onTap: () {
+      if (userName == null) {
+        GotoLoginPage(context).then((res) {
+          if (res != null || res != "") {
+            handleRefresh();
+          }
+        });
+        return;
+      }
       switch (i) {
         case 1:
           Navigator.push(context,
@@ -113,7 +123,7 @@ renderRow(
           break;
         case 2:
           Navigator.push(context,
-              new MaterialPageRoute(builder: (context) => new BankPage()));
+              new MaterialPageRoute(builder: (context) => new BankPage(user)));
           break;
         case 3:
           Navigator.push(

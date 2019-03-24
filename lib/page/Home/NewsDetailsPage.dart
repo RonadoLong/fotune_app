@@ -5,14 +5,11 @@ import 'package:html/dom.dart' as dom;
 
 class NewsDetailsPage extends StatefulWidget {
   String title, content;
-
   NewsDetailsPage(this.title, this.content);
-
   @override
   State<StatefulWidget> createState() =>
       new NewsDetailsPageState(title, content);
 }
-
 class NewsDetailsPageState extends State<NewsDetailsPage> {
   String title, content;
 

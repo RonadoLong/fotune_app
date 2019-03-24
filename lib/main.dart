@@ -18,10 +18,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       showPerformanceOverlay: false,
       home: MainPage(),
-      routes: <String, WidgetBuilder>{
-        '/home': (BuildContext context) => HomePage(),
-        '/quote': (BuildContext context) => QuotePage(),
-      },
+      // routes: <String, WidgetBuilder>{
+      //   '/home': (BuildContext context) => HomePage(),
+      //   '/quote': (BuildContext context) => QuotePage(),
+      // },
       onUnknownRoute: (RouteSettings rs) => new MaterialPageRoute(
           builder: (context) => new NotFoundPage(
                 appTitle: UIData.coming_soon,

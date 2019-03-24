@@ -120,7 +120,7 @@ class MainPageState extends State<MainPageWidget> {
           ),
         ),
         //body表示具体展示的内容
-        body: TabBarView(children: [HomePage(), HomeNewsPage()]),
+        body: TabBarView(children: [HomePage(this.changeTab), HomeNewsPage()]),
       ),
     );
 
@@ -133,6 +133,12 @@ class MainPageState extends State<MainPageWidget> {
       new StrategyPage("实盘策略"),
       new MinePage(),
     ];
+  }
+
+  void changeTab(int index) {
+    setState(() {
+      _tabIndex = index;
+    });
   }
 
   @override

@@ -8,7 +8,7 @@ import 'package:fotune_app/utils/ComstomBtnColumn.dart';
 import 'package:fotune_app/utils/CustomQuoteCell.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
-Widget newButtonSection() {
+Widget newButtonSection(Function callBack) {
   return new Container(
     height: 80,
     color: Colors.white,
@@ -16,10 +16,30 @@ Widget newButtonSection() {
     child: new Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        CustomBtnColumn(Icons.create_new_folder, '发布策略', null),
-        CustomBtnColumn(Icons.account_balance_wallet, '即可充值', null),
-        CustomBtnColumn(Icons.notifications_active, '股票策略', null),
-        CustomBtnColumn(Icons.message, '新手指引', null),
+        GestureDetector(
+          onTap: (){
+            callBack(1);
+          },
+          child: CustomBtnColumn(Icons.create_new_folder, '发布策略', null),
+        ),
+        GestureDetector(
+          onTap: (){
+            callBack(11);
+          },
+          child: CustomBtnColumn(Icons.account_balance_wallet, '即可充值', null),
+        ),
+        GestureDetector(
+          onTap: (){
+            callBack(2);
+          },
+          child: CustomBtnColumn(Icons.notifications_active, '股票策略', null),
+        ),
+        GestureDetector(
+          onTap: (){
+            callBack(12);
+          },
+          child: CustomBtnColumn(Icons.message, '新手指引', null),
+        ),
       ],
     ),
   );

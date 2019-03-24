@@ -38,6 +38,9 @@ dependencies:
   # flutter_inappbrowser: ^0.5.51
   flustars: ^0.2.5
   loadmore: ^1.0.3
+  city_pickers: ^0.1.14
+  flutter_picker:
+    git: https://github.com/yangyxd/flutter_picker.git
 
 dev_dependencies:
   flutter_test:

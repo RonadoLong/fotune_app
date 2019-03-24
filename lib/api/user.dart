@@ -63,3 +63,17 @@ Future<Response> UpdatePwd(params) async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> GetBankList(uid) async {
+  var url = "/bank/list/$uid";
+  var response = await Http().get(url);
+  var res = Response.fromJson(response);
+  return res;
+}
+
+Future<Response> AddBank(query) async {
+  var url = "/bank/add";
+  var response = await Http().post(url, data: query);
+  var res = Response.fromJson(response);
+  return res;
+}

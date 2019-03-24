@@ -12,6 +12,11 @@ import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
+  Function changeTab;
+
+  HomePage(Function change) {
+    this.changeTab = change;
+  }
   @override
   HomePageState createState() => HomePageState();
 }
@@ -72,7 +77,12 @@ class HomePageState extends State<HomePage> {
       child: Column(
         children: <Widget>[
           newCarousel(banners),
-          newButtonSection(),
+          newButtonSection((int i) {
+            print(i);
+            if (i < 10) {
+              widget.changeTab(i);
+            }
+          }),
 //          newMoneyInfoView(),
           newQuoteView(markets),
           newNiuRenView(context, niuPeoples),
@@ -106,7 +116,9 @@ class HomePageState extends State<HomePage> {
     GetNiuPeoples().then((res) {
       if (res.code == 1000) {
         setState(() {
-          niuPeoples = res.data;
+          niuPeoples = res.data != null
+              ? (res.data as List).map((n) => NiuPeople.fromJson(n)).toList()
+              : null;
         });
       }
     });
