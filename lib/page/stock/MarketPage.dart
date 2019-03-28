@@ -20,7 +20,11 @@ class MarketPage extends StatefulWidget {
   State<StatefulWidget> createState() => new MarketPageState();
 }
 
-class MarketPageState extends State<MarketPage> {
+class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMixin{
+
+  @override
+  bool get wantKeepAlive => true;
+
   List<Stock> stocks;
   List<StockIndex> stockIndexs = [];
   User user;

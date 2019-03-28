@@ -21,16 +21,16 @@ Future<Response> QueryShellStrategy(params) async {
 }
 
 // ignore: non_constant_identifier_names
-Future<StrategyResp> GetStrategyList(uid) async {
-  var url = "/strategy/MyList/$uid";
+Future<StrategyResp> GetStrategyList(uid, pageNum, pageSize) async {
+  var url = "/strategy/MyList/$uid/$pageNum/$pageSize";
   var response = await Http().get(url);
   print(response);
   var res = StrategyResp.fromJson(response);
   return res;
 }
 
-Future<FinishStrategyResp> GetCloseList(uid) async {
-  var url = "/strategy/closeList/$uid";
+Future<FinishStrategyResp> GetCloseList(uid, pageNum, pageSize) async {
+  var url = "/strategy/closeList/$uid/$pageNum/$pageSize";
   var response = await Http().get(url);
   var res = FinishStrategyResp.fromJson(response);
   return res;

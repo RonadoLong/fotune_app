@@ -4,8 +4,8 @@ import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
-// const DEVHOST = "http://192.168.101.153:9527";
-const DEVHOST = "http://192.168.3.176:9527";
+const DEVHOST = "http://192.168.101.153:9527";
+// const DEVHOST = "http://192.168.3.176:9527";
 
 class Http {
   static Http instance;
@@ -55,7 +55,7 @@ class Http {
 
   // get 请求封装
   get(url, {options, cancelToken, data}) async {
-    print('get:::url：$url ,body: $data');
+    print('get::: url：$url');
     Response response;
     try {
       response =
@@ -67,7 +67,6 @@ class Http {
         print('get请求发生错误：$e');
       }
     }
-//    print('response::url：$url, resp: $response');
     return response.data;
   }
 
@@ -86,8 +85,6 @@ class Http {
         print('post请求发生错误：$e');
       }
     }
-
-//    print('response::url：$url, resp: $response');
     return response.data;
   }
 
@@ -106,8 +103,6 @@ class Http {
         print('put请求发生错误：$e');
       }
     }
-
-//    print('response::url：$url, resp: $response');
     return response.data;
   }
 }

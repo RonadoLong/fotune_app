@@ -21,3 +21,11 @@ Future<Response> GetNiuPeoples() async {
   var reponse = Response.fromJson(res);
   return reponse;
 }
+
+Future<Response> GetNewsList(int pageNum, int pageSize) async {
+  var url = "/home/news/$pageNum/$pageSize";
+  var res = await Http().get(url);
+  var reponse = Response.fromJson(res);
+  return reponse;
+}
+

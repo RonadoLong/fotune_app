@@ -52,10 +52,10 @@ class StockDetailsPageState extends State<StockDetailsPage>
       today_open;
   String type, stock_code2, stock_code, stock_name;
   
-  String url = "http://192.168.3.176:9527/marker/mindex.html";
+  String url = "";
   int index = 1;
   UserInfo userInfo;
-
+  String host = "127.0.0.1:9527";
   StockDetailsPageState(this.enity);
 
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
@@ -83,8 +83,10 @@ class StockDetailsPageState extends State<StockDetailsPage>
   Widget build(BuildContext context) {
     flutterWebviewPlugin.launch(
       url,
+      clearCache: true,
+      withZoom: false,
       rect: new Rect.fromLTWH(
-          0.0, 210.0, MediaQuery.of(context).size.width, 250.0),
+          0.0, 210.0, MediaQuery.of(context).size.width, 270.0),
     );
 
     Widget body = userInfo == null
@@ -111,6 +113,9 @@ class StockDetailsPageState extends State<StockDetailsPage>
       traded_amount = double.parse(stock.traded_amount);
       gains = stock.gains;
 
+      setState(() {
+        url = "http://$host/marker/timeline/$stock_code";
+      });
       yesterday_close = double.parse(stock.yesterday_close);
       current_prices = double.parse(stock.current_prices);
       today_open = double.parse(stock.today_open);
@@ -224,11 +229,11 @@ class StockDetailsPageState extends State<StockDetailsPage>
   Widget getKline() {
     return SelectedWidget(
       (i) {
+        print(i);
         setState(() {
-          index = i;
           url = i == 1
-              ? "http://192.168.3.176:9527/marker/mindex.html"
-              : "http://192.168.3.176:9527/marker/dindex.html";
+              ? "http://$host/marker/timeline/$stock_code"
+              : "http://$host/marker/kline/$stock_code";
         });
       },
     );
@@ -236,7 +241,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
 
   Widget getSellAndBuy() {
     return Container(
-        margin: EdgeInsets.only(top: 270),
+        margin: EdgeInsets.only(top: 290),
         child: Column(
           children: <Widget>[
             Row(
@@ -436,7 +441,6 @@ class StockDetailsPageState extends State<StockDetailsPage>
   List isCheck = [false, false, false, false];
 
   List<int> _sub = <int>[
-    100,
     1000,
     5000,
     10000,

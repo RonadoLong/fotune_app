@@ -77,3 +77,10 @@ Future<Response> AddBank(query) async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> GetRechargeLists() async {
+  var url = "/recharge";
+  var response = await Http().get(url);
+  var res = Response.fromJson(response);
+  return res;
+}

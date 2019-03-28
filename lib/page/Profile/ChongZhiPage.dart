@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/Chongzhi.dart';
+import 'package:fotune_app/page/Profile/model/RechargeLists.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 class ChongZhiPage extends StatefulWidget {
@@ -19,6 +21,28 @@ class ChongZhiPageState extends State<ChongZhiPage> {
     ChongzhiResp("http://gp.axinmama.com/public/static/home/img/moblie/wx.png",
         "微信支付", "快速安全，24小时支付"),
   ];
+
+  List<Recharge> recharges = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  loadData() {
+    GetRechargeLists().then((res) {
+      if (res.code == 1000) {
+        if (res.data != null) {
+          setState(() {
+            res.data.forEach((v) {
+              recharges.add(Recharge.fromJson(v));
+            });
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

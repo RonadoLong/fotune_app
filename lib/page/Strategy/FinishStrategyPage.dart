@@ -14,9 +14,17 @@ class FinishStrategyPage extends StatefulWidget {
   }
 }
 
-class FinishStrategyPageState extends State<FinishStrategyPage> {
+class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKeepAliveClientMixin{
+
+
+  @override
+  bool get wantKeepAlive => true;
+
+  final ScrollController _scrollController = new ScrollController();
   User user;
   List<CloseStrategys> dataList;
+  int pageNum = 1;
+  int pageSize = 10;
 
   @override
   void initState() {
@@ -26,15 +34,26 @@ class FinishStrategyPageState extends State<FinishStrategyPage> {
       user = GetLocalUser();
       loadData();
     });
+
+     _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        print("========================================= load more");
+        loadData();
+      }
+    });
   }
 
   loadData() {
     if (user != null) {
-      GetCloseList(user.user_id).then((res) {
+      GetCloseList(user.user_id, pageNum, pageSize).then((res) {
         if (res.code == 1000) {
-          print(res);
           setState(() {
             dataList = res.data.strategys;
+          });
+        } else {
+           setState(() {
+            dataList = [];
           });
         }
       }).catchError((err) {
@@ -265,4 +284,5 @@ class FinishStrategyPageState extends State<FinishStrategyPage> {
       ),
     );
   }
+
 }

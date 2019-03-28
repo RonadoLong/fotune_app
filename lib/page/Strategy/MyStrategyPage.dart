@@ -15,10 +15,16 @@ class MyStrategyPage extends StatefulWidget {
   }
 }
 
-class MyStrategyPageState extends State<MyStrategyPage> {
+class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveClientMixin{
+
+  @override
+  bool get wantKeepAlive => true;
+
   List<Strategy> strategyList;
   final ScrollController _scrollController = new ScrollController();
   User user;
+  int pageNum = 1;
+  int pageSize = 20;
 
   @override
   void initState() {
@@ -35,7 +41,7 @@ class MyStrategyPageState extends State<MyStrategyPage> {
         strategyList = [];
       });
     } else {
-      GetStrategyList(user.user_id).then((res) {
+      GetStrategyList(user.user_id, pageNum, pageSize).then((res) {
         print(res.data.myStrategy);
         if (res.code == 1000) {
           setState(() {

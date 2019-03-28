@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fotune_app/model/news_enity.dart';
+import 'package:fotune_app/page/Home/model/News.dart';
 
 import 'BaseModuleWidget.dart';
 import 'package:flutter/material.dart';
 
-Widget ListImageRight(BuildContext context, Data data) {
+Widget ListImageRight(BuildContext context, News data) {
   Widget widget;
   widget = new Row(
     children: <Widget>[
@@ -54,7 +54,7 @@ getImage(String imgUrl) {
     imageUrl: imgUrl,
     errorWidget: new Icon(Icons.error),
     fit: BoxFit.cover,
-    height: 85.0,
+    height: 120.0,
     width: 110.0,
   );
 }

@@ -53,9 +53,10 @@ class CustomQuoteCell extends StatelessWidget {
             child: new Container(
               alignment: FractionalOffset.centerRight,
               height: 56,
-              margin: EdgeInsets.only(right: 10.0),
+              margin: EdgeInsets.only(right: 10.0,bottom: 7),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
                     price,

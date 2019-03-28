@@ -48,6 +48,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
       if (res.code == 1000) {
         setState(() {
           dataList = res.data.details;
+          pageNum = 1;
         });
       }
     });

@@ -38,7 +38,10 @@ renderRow(
                     child: CustomBtnColumn(
                         Icons.account_balance, '充值', Colors.white),
                     onTap: () {
-                      print("========");
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => new ChongZhiPage()));
                     },
                   ),
                 ),
