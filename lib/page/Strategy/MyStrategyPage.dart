@@ -5,6 +5,7 @@ import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Strategy/model/StrategyResp.dart';
+import 'package:fotune_app/utils/Constants.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
@@ -25,28 +26,47 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
   User user;
   int pageNum = 1;
   int pageSize = 20;
-
+  bool isShowMore;
+  
   @override
   void initState() {
     super.initState();
     setState(() {
       user = GetLocalUser();
-      loadData();
+      loadData(START_REQUEST);
+    });
+    _scrollController.addListener((){
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        loadData(LOADMORE_REQIEST);
+      }
     });
   }
 
-  loadData() {
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  loadData(int reqType) {
     if (user == null) {
       setState(() {
         strategyList = [];
       });
     } else {
-      GetStrategyList(user.user_id, pageNum, pageSize).then((res) {
+      var currenPage = reqType == REFRESH_REQIEST ? 1 : pageNum + 1;
+      GetStrategyList(user.user_id, currenPage, pageSize).then((res) {
         print(res.data.myStrategy);
         if (res.code == 1000) {
           setState(() {
-            strategyList = res.data.myStrategy;
+            if (reqType == LOADMORE_REQIEST) {
+              strategyList.addAll(res.data.myStrategy);
+            } else {
+              strategyList = res.data.myStrategy;
+            }
+            pageNum = currenPage;
           });
+
         } else if (res.code == 1004) {
           setState(() {
             strategyList = [];
@@ -350,7 +370,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
       completer.complete();
     });
     return completer.future.then<void>((_) {
-      loadData();
+      loadData(REFRESH_REQIEST);
     });
   }
 

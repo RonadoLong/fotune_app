@@ -22,9 +22,16 @@ class HomeNewsPageState extends State<HomeNewsPage>
   @override
   bool get wantKeepAlive => true;
 
+  @protected
   List<News> newsLists = [];
+
+  @protected
   final ScrollController _scrollController = new ScrollController();
+
+  @protected
   int pageNum = 1;
+
+  @protected
   int pageSize = 10;
 
   @override
@@ -35,7 +42,6 @@ class HomeNewsPageState extends State<HomeNewsPage>
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        print("========================================= load more");
         loadData(LOADMORE_REQIEST);
       }
     });

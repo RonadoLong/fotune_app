@@ -5,6 +5,7 @@ import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/Profile/BankPages.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/Profile/FundDetailsParentsPage.dart';
+import 'package:fotune_app/page/Profile/TiXianPage.dart';
 import 'package:fotune_app/page/Strategy/StrategyPage.dart';
 import 'package:fotune_app/utils/ComstomBtnColumn.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
@@ -64,6 +65,10 @@ renderRow(
                           Icons.account_balance_wallet, '提现', Colors.white),
                       onTap: () {
                         print("======");
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => new TiXianPage(user)));
                       },
                     )),
               ],

@@ -1,9 +1,10 @@
 class Recharge {
-  String id;
+  int id;
   String cardNumber;
   String userName;
   String bankName;
   String qRCodeURL;
+  String desc;
   int status;
   int type;
   String createdAt;
@@ -17,6 +18,7 @@ class Recharge {
       this.qRCodeURL,
       this.status,
       this.type,
+      this.desc,
       this.createdAt,
       this.updatedAt});
 
@@ -28,6 +30,7 @@ class Recharge {
     qRCodeURL = json['QRCodeURL'];
     status = json['status'];
     type = json['type'];
+    desc = json['desc'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
   }

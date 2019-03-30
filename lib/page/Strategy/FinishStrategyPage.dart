@@ -5,6 +5,8 @@ import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Strategy/model/FinishStrategyResp.dart';
+import 'package:fotune_app/page/common/CommonWidget.dart';
+import 'package:fotune_app/utils/Constants.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 class FinishStrategyPage extends StatefulWidget {
@@ -14,9 +16,8 @@ class FinishStrategyPage extends StatefulWidget {
   }
 }
 
-class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKeepAliveClientMixin{
-
-
+class FinishStrategyPageState extends State<FinishStrategyPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -25,36 +26,51 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
   List<CloseStrategys> dataList;
   int pageNum = 1;
   int pageSize = 10;
+  bool isShowMore;
 
   @override
   void initState() {
     super.initState();
-    print("load data ========= ");
     setState(() {
       user = GetLocalUser();
-      loadData();
+      loadData(START_REQUEST);
     });
 
-     _scrollController.addListener(() {
+    _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         print("========================================= load more");
-        loadData();
+        loadData(LOADMORE_REQIEST);
       }
     });
   }
 
-  loadData() {
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  loadData(int type) {
     if (user != null) {
+      var currenPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetCloseList(user.user_id, pageNum, pageSize).then((res) {
         if (res.code == 1000) {
           setState(() {
-            dataList = res.data.strategys;
+            if (type != LOADMORE_REQIEST) {
+              dataList = res.data.strategys;
+            } else {
+              dataList.addAll(res.data.strategys);
+            }
+            pageNum = currenPage;
           });
-        } else {
-           setState(() {
-            dataList = [];
-          });
+        } else if (res.code == 1004) {
+          if (type != LOADMORE_REQIEST) {
+            setState(() {
+              dataList = [];
+            });
+          }
         }
       }).catchError((err) {
         setState(() {
@@ -90,10 +106,14 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
         onRefresh: (() => _handleRefresh()),
         color: UIData.refresh_color, //刷新控件的颜色
         child: ListView.separated(
-          itemCount: dataList.length,
+          itemCount: dataList.length > 10 ? dataList.length + 1 : 0,
           itemBuilder: (context, index) {
             CloseStrategys cs = dataList[index];
-            return buildBodyCell(cs, index);
+            if (index < dataList.length) {
+              return buildBodyCell(cs, index);
+            } else {
+              return Offstage(offstage: isShowMore, child: BuildLoadMoreView());
+            }
           },
           physics: const AlwaysScrollableScrollPhysics(),
           separatorBuilder: (context, idx) {
@@ -113,7 +133,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
       completer.complete();
     });
     return completer.future.then<void>((_) {
-      loadData();
+      loadData(REFRESH_REQIEST);
     });
   }
 
@@ -284,5 +304,4 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
       ),
     );
   }
-
 }

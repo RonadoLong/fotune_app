@@ -20,6 +20,7 @@ class BankPage extends StatefulWidget {
     return BankPageState();
   }
 }
+
 class BankPageState extends State<BankPage> {
   List<Banks> dataList;
 
@@ -79,13 +80,15 @@ class BankPageState extends State<BankPage> {
         onTap: () {
           print("=================");
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BankManagePage(widget.userInfo, dataList[0]))).then((callBack) {
-                    if (callBack) {
-                      loadData();
-                    }
-                  });
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          BankManagePage(widget.userInfo, dataList[0])))
+              .then((callBack) {
+            if (callBack) {
+              loadData();
+            }
+          });
         },
         child: Container(
           child: Column(
@@ -144,9 +147,12 @@ class BankPageState extends State<BankPage> {
       onTap: () {
         print("=================");
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => BankManagePage(widget.userInfo, dataList.length > 0 ? dataList[0] :null)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => BankManagePage(
+                widget.userInfo, dataList.length > 0 ? dataList[0] : null),
+          ),
+        );
       },
       child: Container(
         height: 100,
