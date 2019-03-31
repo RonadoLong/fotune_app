@@ -14,6 +14,8 @@ class FInputWidget extends StatefulWidget {
 
   final TextEditingController controller;
 
+  final bool isNumber;
+
   FInputWidget(
       {Key key,
       this.hintText,
@@ -21,7 +23,8 @@ class FInputWidget extends StatefulWidget {
       this.onChanged,
       this.textStyle,
       this.controller,
-      this.obscureText = false})
+      this.obscureText = false,
+      this.isNumber = false})
       : super(key: key);
 
   @override
@@ -38,6 +41,7 @@ class _FInputWidgetState extends State<FInputWidget> {
       controller: widget.controller,
       onChanged: widget.onChanged,
       obscureText: widget.obscureText,
+      keyboardType: widget.isNumber ? TextInputType.number : TextInputType.text,
       decoration: new InputDecoration(
         hintText: widget.hintText,
         icon: widget.iconData == null ? null : new Icon(widget.iconData),

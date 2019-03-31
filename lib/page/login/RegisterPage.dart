@@ -51,10 +51,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    CustomWidget.BuildLogImage(),
+                    CustomWidget.BuildLogImage(null),
                     new Padding(padding: new EdgeInsets.all(20.0)),
                     new FInputWidget(
                       hintText: "手机号",
+                      isNumber: true,
                       iconData: Icons.phone_locked,
                       onChanged: (String value) {
                         print(value);

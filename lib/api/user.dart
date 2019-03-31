@@ -84,3 +84,10 @@ Future<Response> GetRechargeLists() async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> PostTiXian(params) async {
+  var url = "/user/withdraw";
+  var response = await Http().post(url, data: params);
+  var res = Response.fromJson(response);
+  return res;
+}

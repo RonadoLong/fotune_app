@@ -12,7 +12,6 @@ import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 class MinePage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => new MinePageState();
 }
@@ -21,14 +20,7 @@ class MinePageState extends State<MinePage> {
   static const double IMAGE_ICON_WIDTH = 30.0;
   static const double ARROW_ICON_WIDTH = 16.0;
 
-  List<String> titles = [
-    "",
-    "审核充值",
-    "银行卡管理",
-    "资金明细",
-    "我的持仓",
-    "历史交易"
-  ];
+  List<String> titles = ["", "审核充值", "银行卡管理", "资金明细", "我的持仓", "历史交易"];
   List<IconData> icons = [
     Icons.assignment,
     Icons.ac_unit,
@@ -99,7 +91,6 @@ class MinePageState extends State<MinePage> {
   Widget build(BuildContext context) {
     var name = user != null ? user.userName : null;
     var amount = user != null ? user.amount : null;
-
     var listView = RefreshIndicator(
       onRefresh: (() => _handleRefresh()),
       color: UIData.refresh_color, //刷新控件的颜色
@@ -112,7 +103,8 @@ class MinePageState extends State<MinePage> {
           );
         },
         itemCount: titles.length,
-        itemBuilder: (context, i) => renderRow(i, userAvatar, name, amount, user, titles, icons, context, _handleRefresh),
+        itemBuilder: (context, i) => renderRow(i, userAvatar, name, amount,
+            user, titles, icons, context, _handleRefresh),
       ),
     );
 
@@ -147,8 +139,7 @@ class MinePageState extends State<MinePage> {
                     }
                   });
                 }
-              }
-              ),
+              }),
         ],
       ),
       body: listView,

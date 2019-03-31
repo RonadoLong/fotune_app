@@ -76,12 +76,17 @@ class ChongZhiPageState extends State<ChongZhiPage> {
       // 0-银行卡;1-微信;2-支付宝
       Recharge recharge = recharges[index - 1];
       String name = "";
+      String imgUrl = "";
+
       if (recharge.type == 0) {
         name = "银行卡";
+        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/yl.png";
       } else if (recharge.type == 1) {
         name = "微信";
+        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/wx.png";
       } else {
         name = "支付宝";
+        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/zfb.png";
       }
       return GestureDetector(
         onTap: () {
@@ -100,7 +105,7 @@ class ChongZhiPageState extends State<ChongZhiPage> {
                 padding: EdgeInsets.all(10),
                 height: 64,
                 width: 84,
-                child: Image.network(datas[index - 1].imgUrl),
+                child: Image.network(imgUrl),
               ),
               Column(
                 mainAxisSize: MainAxisSize.max,
@@ -142,7 +147,7 @@ class ChongzhiDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidget.BuildAppBar(title, context),
-      body: buildCard() ,
+      body: buildCard(),
     );
   }
 
@@ -152,61 +157,69 @@ class ChongzhiDetail extends StatelessWidget {
       return Container(
         margin: EdgeInsets.all(8),
         height: 200,
-        child: Card(color: Colors.white, child: Container(
-        margin: EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(" 账号: " + recharge.cardNumber),
-            Padding(
-              padding: EdgeInsets.only(top: 6),
-            ),
-            Text(" 姓名: " + recharge.userName),
-            Padding(
-              padding: EdgeInsets.only(top: 6),
-            ),
-            Text(" 开户行: ${recharge.bankName}"),
-            Padding(
-              padding: EdgeInsets.only(top: 6),
-            ),
-            Text(" " + recharge.desc)
-          ],
-        ),
-      )),
-      ); 
+        child: Card(
+            color: Colors.white,
+            child: Container(
+              margin: EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(" 账号: " + recharge.cardNumber),
+                  Padding(
+                    padding: EdgeInsets.only(top: 6),
+                  ),
+                  Text(" 姓名: " + recharge.userName),
+                  Padding(
+                    padding: EdgeInsets.only(top: 6),
+                  ),
+                  Text(" 开户行: ${recharge.bankName}"),
+                  Padding(
+                    padding: EdgeInsets.only(top: 6),
+                  ),
+                  Text(" " + recharge.desc)
+                ],
+              ),
+            )),
+      );
     } else {
       return Container(
         margin: EdgeInsets.all(10),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("请用${title}扫描二维码"),
-             Padding(
-              padding: EdgeInsets.only(top: 15),
-            ),
-            Container(
-              height: 250,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Image.network(recharge.qRCodeURL, width: 250, height: 250,)
-                ],
+            // mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text("请用${title}扫描二维码"),
+              Padding(
+                padding: EdgeInsets.only(top: 15),
               ),
-            ),
-             Padding(
-              padding: EdgeInsets.only(top: 15),
-            ),
-            Text("请扫码充值，并务必在转账备注中填写注册手机号，这样方便我们多重信息确认您的汇款。", style: TextStyle(color: Colors.red),),
-            Padding(
-              padding: EdgeInsets.only(top: 6),
-            ),
-            Text(recharge.desc),
-          ]
-        ),
+              Container(
+                height: 250,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Image.network(
+                      recharge.qRCodeURL,
+                      width: 250,
+                      height: 250,
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 15),
+              ),
+              Text(
+                "请扫码充值，并务必在转账备注中填写注册手机号，这样方便我们多重信息确认您的汇款。",
+                style: TextStyle(color: Colors.red),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 6),
+              ),
+              Text(recharge.desc),
+            ]),
       );
     }
   }

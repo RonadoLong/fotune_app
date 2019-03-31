@@ -44,10 +44,11 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    CustomWidget.BuildLogImage(),
+                    CustomWidget.BuildLogImage(null),
                     new Padding(padding: new EdgeInsets.all(10.0)),
                     new FInputWidget(
                       hintText: "手机号",
+                      isNumber: true,
                       iconData: Icons.account_circle,
                       onChanged: (String value) {
                         print(value);

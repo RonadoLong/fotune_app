@@ -23,13 +23,13 @@ class HomeNewsPageState extends State<HomeNewsPage>
   bool get wantKeepAlive => true;
 
   @protected
-  List<News> newsLists = [];
+  List<News> newsLists;
 
   @protected
   final ScrollController _scrollController = new ScrollController();
 
   @protected
-  int pageNum = 1;
+  int pageNum = 0;
 
   @protected
   int pageSize = 10;
@@ -71,11 +71,17 @@ class HomeNewsPageState extends State<HomeNewsPage>
   }
 
   Widget getBody(BuildContext context) {
-    if (newsLists.length == 0 || newsLists.isEmpty) {
+    if (newsLists == null) {
       return new Center(
         child: CircularProgressIndicator(
           backgroundColor: UIData.refresh_color,
         ),
+      );
+    }
+
+    if (newsLists.length == 0 || newsLists.isEmpty) {
+      return new Center(
+        child: buildEmptyView(),
       );
     } else {
       return new RefreshIndicator(
@@ -112,23 +118,6 @@ class HomeNewsPageState extends State<HomeNewsPage>
     return (newsLists.length > 0) ? newsLists.length + 1 : newsLists.length;
   }
 
-  // ///上拉加载更多
-  // Widget _buildProgressIndicator() {
-  //   Widget bottomWidget =
-  //       new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-  //     new SpinKitThreeBounce(color: Color(0xFF24292E)),
-  //     new Container(
-  //       width: 5.0,
-  //     ),
-  //   ]);
-  //   return new Padding(
-  //     padding: const EdgeInsets.all(20.0),
-  //     child: new Center(
-  //       child: bottomWidget,
-  //     ),
-  //   );
-  // }
-
   void onItemClick(int i) {
     News data = newsLists[i];
     Navigator.push(
@@ -140,8 +129,8 @@ class HomeNewsPageState extends State<HomeNewsPage>
 
   /// 获取数据
   void loadData(int requestType) async {
-    var currenPage = requestType == REFRESH_REQIEST ? 1 :pageNum + 1;
- 
+    var currenPage = requestType == REFRESH_REQIEST ? 1 : pageNum + 1;
+
     GetNewsList(currenPage, pageSize).then((res) {
       if (res.code == 1000) {
         var newsData = NewsData.fromJson(res.data);
@@ -155,15 +144,17 @@ class HomeNewsPageState extends State<HomeNewsPage>
           });
         }
 
-      setState(() {
-        pageNum = currenPage;
-      });
-       
+        setState(() {
+          pageNum = currenPage;
+        });
       } else if (res.code == 1004) {
         ShowToast("没有更多数据了");
       }
     }).catchError((err) {
       ShowToast("网络出错");
+      setState(() {
+        newsLists = [];
+      });
     });
   }
 }

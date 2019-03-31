@@ -47,7 +47,7 @@ renderRow(
                   ),
                 ),
                 GestureDetector(
-                  child: CustomWidget.BuildLogImage(),
+                  child: CustomWidget.BuildLogImage(userAvatar),
                   onTap: () {
                     if (userName == null) {
                       GotoLoginPage(context).then((res) {
@@ -66,9 +66,12 @@ renderRow(
                       onTap: () {
                         print("======");
                         Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => new TiXianPage(user)));
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) => new TiXianPage(user)))
+                            .then((res) {
+                          handleRefresh();
+                        });
                       },
                     )),
               ],

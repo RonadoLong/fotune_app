@@ -12,7 +12,10 @@ class CustomWidget {
     );
   }
 
-  static Container BuildLogImage() {
+  static Container BuildLogImage(String url) {
+    var avatar = url == null
+        ? "http://gp.axinmama.com/public/static/home/img/moblie/default-user-img5.png"
+        : url;
     return Container(
       width: 80.0,
       height: 80.0,
@@ -20,9 +23,7 @@ class CustomWidget {
         shape: BoxShape.circle,
         color: UIData.primary_color,
         image: new DecorationImage(
-            image:
-                new NetworkImage("https://image.showm.xin/wb/user/profile.jpg"),
-            fit: BoxFit.cover),
+            image: new NetworkImage(avatar), fit: BoxFit.cover),
         border: new Border.all(
           color: UIData.primary_color,
           width: 2.0,
