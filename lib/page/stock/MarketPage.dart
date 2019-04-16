@@ -20,18 +20,22 @@ class MarketPage extends StatefulWidget {
   State<StatefulWidget> createState() => new MarketPageState();
 }
 
-class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMixin{
-
+class MarketPageState extends State<MarketPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   List<Stock> stocks;
   List<StockIndex> stockIndexs = [];
   User user;
+  String editTitle = "编辑";
+  String cancelTitle = "取消";
+  bool isCancel = false;
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);//必须添加
+    super.build(context); //必须添加
     return Scaffold(
       appBar: buildAppBar(),
       body: new Center(child: getBody()),
@@ -108,6 +112,26 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
       ),
       backgroundColor: UIData.primary_color,
       iconTheme: new IconThemeData(color: Colors.white),
+      automaticallyImplyLeading: true,
+      leading: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isCancel = !isCancel;
+              });
+            },
+            child: Container(
+                child: Text(
+              isCancel ? cancelTitle : editTitle,
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            )),
+          )
+        ],
+      ),
       actions: <Widget>[
         Row(
           children: <Widget>[
@@ -306,8 +330,7 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
     double yesterdayClose = double.parse(stock.yesterday_close);
     double currentPrices = double.parse(stock.current_prices);
     double todayOpen = double.parse(stock.today_open);
-    double gains =
-        ComputeGainsRate(yesterdayClose, currentPrices, todayOpen);
+    double gains = ComputeGainsRate(yesterdayClose, currentPrices, todayOpen);
     stocks[position].gains = gains;
     String currentPricesStr = currentPrices.toStringAsFixed(2);
     return new GestureDetector(
@@ -355,8 +378,21 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
                 flex: 2,
               ),
               new Expanded(
-                child: ShowGains(gains),
+                child: Offstage(
+                  offstage: isCancel,
+                  child: ShowGains(gains),
+                ),
                 flex: 1,
+              ),
+              Offstage(
+                offstage: isCancel == false,
+                child: new IconButton(
+                  icon: Icon(Icons.delete_forever),
+                  onPressed: () {
+                    _showDialog(stock);
+                  },
+                  color: Colors.red,
+                ),
               )
             ],
           ),
@@ -364,6 +400,55 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
       ),
       onTap: () {
         onItimeClick(stock);
+      },
+    );
+  }
+
+  void _showDialog(Stock stock) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("温馨提示"),
+          content: new Text("是否确定删除？"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("取消"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("确认"),
+              onPressed: () {
+                if (loading) return;
+                setState(() {
+                  loading = true;
+                });
+                var req = {
+                  "userId": user.user_id,
+                  "code": stock.stock_code,
+                };
+                DelOptional(req).then((res) {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    loading = false;
+                  });
+                  if (res.code == 1000) {
+                    this.loadData();
+                    ShowToast("删除成功");
+                  }
+                }).catchError((err){ setState(() {
+                  setState(() {
+                    loading = false;
+                  });
+                });});
+              },
+            ),
+          ],
+        );
       },
     );
   }

@@ -62,3 +62,10 @@ Future<Response> GetOptionalList(uid) async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> DelOptional(params) async {
+  var url = "/stock/deleteOptional";
+  var response = await Http().post(url, data: params);
+  var res = Response.fromJson(response);
+  return res;
+}

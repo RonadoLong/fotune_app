@@ -28,6 +28,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
   int pageNum = 0;
   int pageSize = 20;
   bool isShowMore;
+  bool loading = false;
 
   @override
   void initState() {
@@ -349,6 +350,12 @@ class MyStrategyPageState extends State<MyStrategyPage>
 
   // ignore: non_constant_identifier_names
   void ShellStrategy(Strategy strategy) {
+    if (loading) return;
+
+    setState(() {
+      loading = true;
+    });
+
     User user = GetLocalUser();
     var query = {
       "uid": user.user_id,
@@ -356,6 +363,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
       "closeType": 1,
     };
     QueryShellStrategy(query).then((res) {
+      setState(() {
+        loading = false;
+      });
       if (res.code == 1000) {
         ShowToast("操作成功");
       } else {
@@ -363,6 +373,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
       }
     }).catchError((err) {
       print(err);
+      setState(() {
+        loading = false;
+      });
     });
   }
 
@@ -411,6 +424,11 @@ class MyStrategyPageState extends State<MyStrategyPage>
                 child: new Text("确认", style: TextStyle(color: Colors.white)),
                 color: UIData.primary_color,
                 onPressed: () {
+                  if (loading) return;
+
+                  setState(() {
+                    loading = true;
+                  });
                   var price = phoneController.text.trim();
                   if (price.length == 0) {
                     ShowToast("请输入您要追加的金额");
@@ -423,6 +441,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
                     "creditAmount": double.parse(phoneController.text)
                   };
                   AddCredit(req).then((res){
+                    setState(() {
+                      loading = false;
+                    });
                     if (res.code == 1000) {
                       ShowToast("追加成功");
                       Navigator.of(context).pop();
@@ -430,6 +451,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
                       ShowToast("操作失败");
                     }
                   }).catchError((err) {
+                    setState(() {
+                      loading = false;
+                    });
                   });
                 },
               ),

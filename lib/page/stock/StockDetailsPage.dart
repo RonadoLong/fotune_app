@@ -58,10 +58,11 @@ class StockDetailsPageState extends State<StockDetailsPage>
   String host = "47.75.33.6";
   Setting setting;
 
+  bool loading = false;
+
   List isCheck = [false, false, false, false];
 
   List<int> _sub = [];
-
   List<int> beishuList = [];
 
   Iterable<Widget> get actorWidgets sync* {}
@@ -591,6 +592,15 @@ class StockDetailsPageState extends State<StockDetailsPage>
                     ShowToast("您的账户余额不足请前往充值");
                     return;
                   }
+
+                  if (loading) {
+                    return;
+                  }
+
+                  setState(() {
+                    loading = true;
+                  });
+
                   var addStrategyReq = {
                     "uid": userInfo.id,
                     "stockCode": stock.stock_code,
@@ -600,6 +610,9 @@ class StockDetailsPageState extends State<StockDetailsPage>
                   };
                   print(addStrategyReq);
                   AddStrategy(addStrategyReq).then((res) {
+                    setState(() {
+                      loading = false;
+                    });
                     if (res.code == 1000) {
                       ShowToast("添加成功");
                     } else {
@@ -607,6 +620,9 @@ class StockDetailsPageState extends State<StockDetailsPage>
                     }
                     Navigator.of(context).pop();
                   }).then((res) {
+                    setState(() {
+                      loading = false;
+                    });
 //                    ShowToast("网络出错");
                   });
                 },
@@ -645,7 +661,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
           }
         });
       }).catchError((e) {
-        ShowToast("网络异常，请检查");
+//        ShowToast("网络异常，请检查");
       });
     }
   }
