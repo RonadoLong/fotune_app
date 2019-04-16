@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fotune_app/componets/carousel.dart';
 import 'package:fotune_app/componets/cell.dart';
+import 'package:fotune_app/page/Home/model/Carsousel.dart';
 import 'package:fotune_app/page/Home/model/NiuPeople.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 import 'package:fotune_app/utils/ComstomBtnColumn.dart';
@@ -45,7 +46,10 @@ Widget newButtonSection(Function callBack) {
   );
 }
 
-Container newCarousel(List<String> _images) {
+Container newCarousel(List<Carousel> _images) {
+  if (_images.isEmpty) {
+    return Container();
+  }
   return new Container(
       height: 220.0,
       child: ListView(
@@ -58,7 +62,7 @@ Container newCarousel(List<String> _images) {
               showIndicators: true,
               children: _images.map((item) {
                 return Image.network(
-                  item,
+                  item.url,
                   fit: BoxFit.cover,
                 );
               }).toList(),
@@ -69,36 +73,6 @@ Container newCarousel(List<String> _images) {
           ),
         ],
       ));
-}
-
-Widget newMoneyInfoView() {
-  return new Container(
-    height: 50,
-    color: Colors.white,
-    margin: EdgeInsets.only(bottom: 6.0),
-    child: new Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(left: 10),
-          child: Icon(
-            Icons.perm_contact_calendar,
-            color: UIData.normal_font_color,
-          ),
-        ),
-        new Container(
-          margin: EdgeInsets.only(left: 6.0),
-          child: Text(
-            "当前账户余额: 10000元",
-            style: TextStyle(
-                color: UIData.normal_font_color,
-                fontSize: 14.0,
-                fontWeight: FontWeight.w500),
-          ),
-        )
-      ],
-    ),
-  );
 }
 
 Widget newQuoteView(List<StockIndex> markets) {

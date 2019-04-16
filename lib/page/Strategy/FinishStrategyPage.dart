@@ -35,7 +35,6 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
       user = GetLocalUser();
       loadData(START_REQUEST);
     });
-
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -53,7 +52,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
 
   loadData(int type) {
     if (user != null) {
-      var currenPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
+      var currentPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetCloseList(user.user_id, pageNum, pageSize).then((res) {
         if (res.code == 1000) {
           setState(() {
@@ -62,12 +61,12 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
             } else {
               dataList.addAll(res.data.strategys);
             }
-            pageNum = currenPage;
+            pageNum = currentPage;
           });
         } else if (res.code == 1004) {
           if (type != LOADMORE_REQIEST) {
             setState(() {
-              dataList = [];
+              dataList = dataList == null ? [] : dataList;
             });
           }
         }
@@ -85,6 +84,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);//必须添加
     return Scaffold(
       body: Center(
         child: buildBody(),

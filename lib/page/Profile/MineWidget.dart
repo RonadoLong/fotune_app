@@ -12,10 +12,10 @@ import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 renderRow(
-    int i,
+    var i,
     String userAvatar,
     String userName,
-    double price,
+    var price,
     UserInfo user,
     List<String> cellTitle,
     List<IconData> cellIcon,

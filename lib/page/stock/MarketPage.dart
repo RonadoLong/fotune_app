@@ -31,6 +31,7 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);//必须添加
     return Scaffold(
       appBar: buildAppBar(),
       body: new Center(child: getBody()),
@@ -54,11 +55,12 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
           print(res.data);
           if (res.data != "") {
             getStocks(1, res.data.toString());
-          } else {
-            setState(() {
-              stocks = [];
-            });
           }
+        } else {
+          print("======================");
+          setState(() {
+            stocks = [];
+          });
         }
       });
     } else {
@@ -152,14 +154,14 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
         }
       });
     }).catchError((e) {
-      ShowToast("网络出错");
+      print(e);
+//      ShowToast("网络出错");
     });
   }
 
   void getDataIndex(int request_type) {
     String url = "http://hq.sinajs.cn/list=s_sz399001,s_sz399006,s_sh000001";
     fetch(url).then((data) {
-//      print("指数数据==》" + data);
       setState(() {
         List<String> index_strs = data.split(";");
         setState(() {
@@ -172,7 +174,7 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
         });
       });
     }).catchError((e) {
-      ShowToast("网络出错");
+//      ShowToast("网络出错");
     });
   }
 
@@ -221,21 +223,21 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
 
   //显示涨幅
   ShowGains(double gains) {
-    Color show_color;
-    String gains_str = (gains * 100).toStringAsFixed(2) + "%";
+    Color showColor;
+    String gainsStr = (gains * 100).toStringAsFixed(2) + "%";
     if (gains > 0) {
-      show_color = Colors.red;
-      gains_str = "+" + gains_str;
+      showColor = Colors.red;
+      gainsStr = "+" + gainsStr;
     } else if (gains < 0) {
-      show_color = Colors.green;
+      showColor = Colors.green;
     } else {
-      show_color = Colors.black38;
+      showColor = Colors.black38;
     }
     return new Container(
-      color: show_color,
+      color: showColor,
       padding: new EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
       child: new Text(
-        gains_str,
+        gainsStr,
         style: new TextStyle(fontSize: 18.0, color: Colors.white),
       ),
       alignment: FractionalOffset.center,
@@ -301,13 +303,13 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
 
   getListViewItem(int position) {
     Stock stock = stocks[position];
-    double yesterday_close = double.parse(stock.yesterday_close);
-    double current_prices = double.parse(stock.current_prices);
-    double today_open = double.parse(stock.today_open);
+    double yesterdayClose = double.parse(stock.yesterday_close);
+    double currentPrices = double.parse(stock.current_prices);
+    double todayOpen = double.parse(stock.today_open);
     double gains =
-        ComputeGainsRate(yesterday_close, current_prices, today_open);
+        ComputeGainsRate(yesterdayClose, currentPrices, todayOpen);
     stocks[position].gains = gains;
-    String current_prices_str = current_prices.toStringAsFixed(2);
+    String currentPricesStr = currentPrices.toStringAsFixed(2);
     return new GestureDetector(
       child: new Card(
         child: new Padding(
@@ -345,7 +347,7 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
               new Expanded(
                 child: new Container(
                   child: new Text(
-                    current_prices_str,
+                    currentPricesStr,
                     style: new TextStyle(fontSize: 18.0),
                   ),
                   alignment: FractionalOffset.center,
@@ -391,17 +393,17 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
   }
 
   Widget getItemWidget(StockIndex stockIndex) {
-    Color show_color;
-    String gains_rate = stockIndex.gains_rate;
-    String change_prefix = "";
-    if (gains_rate == "0.00") {
-      show_color = Colors.black38;
+    Color showColor;
+    String gainsRate = stockIndex.gains_rate;
+    String changePrefix = "";
+    if (gainsRate == "0.00") {
+      showColor = Colors.black38;
     } else {
-      if (gains_rate.indexOf("-") == -1) {
-        change_prefix = "+";
-        show_color = Colors.red;
+      if (gainsRate.indexOf("-") == -1) {
+        changePrefix = "+";
+        showColor = Colors.red;
       } else {
-        show_color = Colors.green;
+        showColor = Colors.green;
       }
     }
 
@@ -426,7 +428,7 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
               margin: EdgeInsets.all(2),
               child: Text(
                 stockIndex.current_points,
-                style: new TextStyle(fontSize: 17.0, color: show_color),
+                style: new TextStyle(fontSize: 17.0, color: showColor),
                 maxLines: 1,
                 textAlign: TextAlign.center,
               ),
@@ -446,8 +448,8 @@ class MarketPageState extends State<MarketPage> with AutomaticKeepAliveClientMix
                   ),
                   Container(
                     child: Text(
-                      change_prefix + gains_rate + "%",
-                      style: new TextStyle(fontSize: 12.0, color: show_color),
+                      changePrefix + gainsRate + "%",
+                      style: new TextStyle(fontSize: 12.0, color: showColor),
                       maxLines: 1,
                     ),
                     alignment: FractionalOffset.center,

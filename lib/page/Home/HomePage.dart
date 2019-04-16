@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fotune_app/api/home.dart';
 import 'package:fotune_app/page/Home/HomeWidget.dart';
 import 'package:fotune_app/page/Home/NewPeoplePage.dart';
+import 'package:fotune_app/page/Home/model/Carsousel.dart';
 import 'package:fotune_app/page/Home/model/NiuPeople.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
@@ -14,6 +15,7 @@ import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
+
   Function changeTab;
 
   HomePage(Function change) {
@@ -21,22 +23,31 @@ class HomePage extends StatefulWidget {
   }
   @override
   HomePageState createState() => HomePageState();
+
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   var title = '首页';
-
   List<StockIndex> markets = [];
   List<NiuPeople> niuPeoples = [];
-
-  List<String> banners = [
-    'https://gw.alipayobjects.com/zos/rmsportal/iZBVOIhGJiAnhplqjvZW.png',
-  ];
+  List<Carousel> banners = [];
 
   @override
   void initState() {
     super.initState();
-    getDataIndex(1);
+    this.loadData();
+  }
+
+  loadData() {
+    GetBanners().then((res) {
+      print(res.code);
+      if (res.code == 1000) {
+        setState(() {
+          banners = res.data;
+        });
+      }
+      getDataIndex(1);
+    });
   }
 
   Widget getBody(BuildContext context) {
@@ -57,14 +68,14 @@ class HomePageState extends State<HomePage> {
             },
             physics: new AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
-            separatorBuilder: (context, idx) {
-              //分割线
+            separatorBuilder: (context, idx) {              //分割线
               return Container(
                 height: 5,
                 color: Color.fromARGB(50, 183, 187, 197),
               );
             },
-          ));
+          )
+      );
     }
   }
 
@@ -84,16 +95,17 @@ class HomePageState extends State<HomePage> {
             if (i < 10) {
               widget.changeTab(i);
             } else if (i == 12) {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => NewPeoplePage('http://gp.axinmama.com/guild.html')));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          NewPeoplePage('http://gp.axinmama.com/guild.html')));
             } else {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChongZhiPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChongZhiPage()));
             }
           }),
-//          newMoneyInfoView(),
           newQuoteView(markets),
-          newNiuRenView(context, niuPeoples),
-//          newInfoView(context)
         ],
       ),
     );
@@ -102,7 +114,6 @@ class HomePageState extends State<HomePage> {
   void getDataIndex(int request_type) {
     String url = "http://hq.sinajs.cn/list=s_sz399001,s_sz399006,s_sh000001";
     fetch(url).then((data) {
-      // print("指数数据==》" + data);
       setState(() {
         List<String> indexStrings = data.split(";");
         List<StockIndex> dataList = [];
@@ -117,17 +128,7 @@ class HomePageState extends State<HomePage> {
         });
       });
     }).catchError((e) {
-      ShowToast("加载失败");
-    });
-
-    GetNiuPeoples().then((res) {
-      if (res.code == 1000) {
-        setState(() {
-          niuPeoples = res.data != null
-              ? (res.data as List).map((n) => NiuPeople.fromJson(n)).toList()
-              : null;
-        });
-      }
+//      ShowToast("加载失败");
     });
   }
 
@@ -143,14 +144,18 @@ class HomePageState extends State<HomePage> {
       completer.complete();
     });
     return completer.future.then<void>((_) {
-      getDataIndex(1);
+      loadData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);//必须添加
     return Scaffold(
       body: getBody(context),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

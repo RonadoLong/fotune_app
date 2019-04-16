@@ -75,6 +75,7 @@ class MinePageState extends State<MinePage> {
         });
       }
     }).catchError((err) {
+      print(err);
       ShowToast("未知错误，请重试");
     });
   }

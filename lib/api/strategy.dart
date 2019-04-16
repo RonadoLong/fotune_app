@@ -1,7 +1,5 @@
 import 'package:fotune_app/api/HttpUtils.dart';
 import 'package:fotune_app/model/Response.dart';
-import 'package:fotune_app/model/User.dart';
-import 'package:flustars/flustars.dart';
 import 'package:fotune_app/page/Strategy/model/FinishStrategyResp.dart';
 import 'package:fotune_app/page/Strategy/model/StrategyResp.dart';
 import 'package:fotune_app/page/stock/model/SearchResp.dart';
@@ -12,6 +10,14 @@ Future<Response> AddStrategy(params) async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> AddCredit(params) async {
+  var url = "/strategy/addCredit";
+  var response = await Http().post(url, data: params);
+  var res = Response.fromJson(response);
+  return res;
+}
+
 
 Future<Response> QueryShellStrategy(params) async {
   var url = "/strategy/close";

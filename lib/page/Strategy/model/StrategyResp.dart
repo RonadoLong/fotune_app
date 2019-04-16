@@ -23,13 +23,11 @@ class StrategyResp {
 }
 
 class DataBean {
-  String paginator;
   List<Strategy> myStrategy;
 
-  DataBean({this.paginator, this.myStrategy});
+  DataBean({this.myStrategy});
 
   DataBean.fromJson(Map<String, dynamic> json) {
-    this.paginator = json['paginator'];
     this.myStrategy = (json['myStrategy'] as List) != null
         ? (json['myStrategy'] as List).map((i) => Strategy.fromJson(i)).toList()
         : null;
@@ -37,7 +35,6 @@ class DataBean {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['paginator'] = this.paginator;
     data['myStrategy'] = this.myStrategy != null
         ? this.myStrategy.map((i) => i.toJson()).toList()
         : null;
@@ -50,9 +47,9 @@ class Strategy {
   String stockName;
   String buyPrice;
   String localPrice;
-  double amount;
-  double profit;
-  int count;
+  var amount;
+  var profit;
+  var count;
   DetailBean Detail;
   bool isShow = true;
 
@@ -97,8 +94,8 @@ class Strategy {
 class DetailBean {
   String buyTime;
   String orderNo;
-  double creditAmount;
-  double stopLoss;
+  var creditAmount;
+  var stopLoss;
   String floatProfit;
 
   DetailBean(

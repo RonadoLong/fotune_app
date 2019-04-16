@@ -31,6 +31,10 @@ class SettingPageState extends State<SettingPage> {
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
+
+  loadData() {
     User userinfo = GetLocalUser();
     if (userinfo == null) {
       return;
@@ -151,7 +155,7 @@ class SettingPageState extends State<SettingPage> {
       } else if (index == 2) {
         url = "http://gp.axinmama.com/public/static/home/img/yes.png";
         name = "绑定手机";
-        desc = "18826073368";
+        desc = userInfo != null ? userInfo.phone : "";
       } else {
         url = "http://gp.axinmama.com/public/static/home/img/yes.png";
         name = "登录密码";
@@ -224,33 +228,25 @@ class SettingPageState extends State<SettingPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text(
-            "实名认证",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15),
-          ),
           content: Container(
-            width: 300,
-            height: 300,
+            height: 200,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(5),
                   color: Colors.amber[100],
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "1. 一个身份证对应一个账号",
-                        style: TextStyle(fontSize: 15),
+                        "1. 一个身份证对应一个账号，如遇到问题，请联系客服 ",
+                        style: TextStyle(fontSize: 12),
                       ),
-                      Text("2. 如遇到问题，请联系客服 ", style: TextStyle(fontSize: 15)),
-                      Text("    0571-86718052", style: TextStyle(fontSize: 15))
                     ],
                   ),
                 ),
-                new Padding(padding: new EdgeInsets.all(10.0)),
+                new Padding(padding: new EdgeInsets.all(5.0)),
                 new FInputWidget(
                   hintText: "真实姓名",
                   iconData: Icons.verified_user,
@@ -259,7 +255,7 @@ class SettingPageState extends State<SettingPage> {
                   },
                   controller: _userController,
                 ),
-                new Padding(padding: new EdgeInsets.all(10.0)),
+                new Padding(padding: new EdgeInsets.all(5.0)),
                 new FInputWidget(
                   hintText: "身份证号",
                   iconData: Icons.format_indent_decrease,
@@ -299,6 +295,7 @@ class SettingPageState extends State<SettingPage> {
                     if (res.code == 1000) {
                       ShowToast("绑定成功");
                       Navigator.of(context).pop();
+                      this.loadData();
                     } else {
                       ShowToast("绑定失败，请联系客服");
                     }
@@ -321,18 +318,12 @@ class SettingPageState extends State<SettingPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text(
-            "修改密码",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15),
-          ),
           content: Container(
-            width: 300,
-            height: 300,
+            height: 200,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                new Padding(padding: new EdgeInsets.all(10.0)),
+                new Padding(padding: new EdgeInsets.all(5.0)),
                 new FInputWidget(
                   hintText: "当前密码",
                   iconData: Icons.verified_user,
@@ -342,7 +333,7 @@ class SettingPageState extends State<SettingPage> {
                   },
                   controller: _orderPWDController,
                 ),
-                new Padding(padding: new EdgeInsets.all(10.0)),
+                new Padding(padding: new EdgeInsets.all(5.0)),
                 new FInputWidget(
                   hintText: "新密码",
                   iconData: Icons.verified_user,
@@ -352,7 +343,7 @@ class SettingPageState extends State<SettingPage> {
                   },
                   controller: _newPWDController,
                 ),
-                new Padding(padding: new EdgeInsets.all(10.0)),
+                new Padding(padding: new EdgeInsets.all(5.0)),
                 new FInputWidget(
                   hintText: "确认密码",
                   iconData: Icons.format_indent_decrease,

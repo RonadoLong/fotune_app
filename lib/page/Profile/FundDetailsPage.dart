@@ -95,13 +95,14 @@ class FundDetailsPageState extends State<FundDetailsPage> {
   }
 
   Widget buildBodyCell(FoundDetails fd) {
-    double w = MediaQuery.of(context).size.width - 100;
+    double w = MediaQuery.of(context).size.width - 120;
     Color color = fd.changeAmount.toString().indexOf("-") != -1
-        ? Colors.red
-        : Colors.green;
+        ? Colors.green
+        : Colors.red;
 
     DateTime dateTime = DateTime.parse(fd.createdAt);
-    String dateStr =  formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
+    String dateStr =
+        formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
 
     return Container(
       color: Colors.white,
@@ -112,31 +113,38 @@ class FundDetailsPageState extends State<FundDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Container(
-                width: w,
-                child: Text(
-                  fd.description,
-                  maxLines: 2,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: w,
+                    child: Text(
+                      fd.description,
+                      maxLines: 2,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Text(
+                      dateStr,
+                      style: TextStyle(color: Colors.black38),
+                    ),
+                  )
+                ],
               ),
               Container(
                 margin: EdgeInsets.only(left: 8),
                 child: Text(
                   fd.changeAmount.toString(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: color),
+                  overflow: TextOverflow.fade,
+                  style: TextStyle(color: color, fontSize: 12),
                 ),
               )
             ],
           ),
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            child: Text(
-              dateStr,
-              style: TextStyle(color: Colors.black38),
-            ),
-          )
         ],
       ),
     );

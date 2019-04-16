@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
-import 'package:fotune_app/utils/ToastUtils.dart';
-
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
-// const DEVHOST = "http://192.168.101.153:9527";
-const DEVHOST = "http://192.168.3.176:9527";
+const PROHOST = "http://47.75.33.6";
+const DEVHOST = "http://127.0.0.1:9527";
 
 class Http {
   static Http instance;
@@ -13,6 +11,7 @@ class Http {
   static Dio _dio;
   static const CONTENT_TYPE_JSON = "application/json";
   static const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
+  static String host = inProduction ? PROHOST : DEVHOST;
 
   BaseOptions _options;
 
@@ -25,7 +24,6 @@ class Http {
   }
 
   Http() {
-    String host = inProduction ? "" : DEVHOST;
     _options = new BaseOptions(
       baseUrl: "$host/api/client",
       connectTimeout: 10000,
@@ -44,10 +42,10 @@ class Http {
       return options;
     }, onResponse: (Response response) {
       // 在返回响应数据之前做一些预处理
-//      print("InterceptorsWrapper ===== $response.data ");
+      print("InterceptorsWrapper ===== $response.data ");
       return response; // continue
     }, onError: (DioError e) {
-      ShowToast("请求失败");
+      // ShowToast("请求失败，请重试");
       print("InterceptorsWrapper ====== err $e");
       return e;
     }));
@@ -58,8 +56,7 @@ class Http {
     print('get::: url：$url');
     Response response;
     try {
-      response =
-          await _dio.get(url, queryParameters: data, cancelToken: cancelToken);
+      response = await _dio.get(url, queryParameters: data, cancelToken: cancelToken);
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
         print('get请求取消! ' + e.message);

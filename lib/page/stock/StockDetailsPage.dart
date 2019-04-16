@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fotune_app/api/Setting.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/ListEnity.dart';
@@ -10,6 +11,7 @@ import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/stock/DiscoverWidget.dart';
 import 'package:fotune_app/page/stock/SelectedWidget.dart';
+import 'package:fotune_app/page/stock/model/Setting.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 
@@ -30,9 +32,7 @@ class SellAndBuy {
 
 class StockDetailsPage extends StatefulWidget {
   ListEnity enity;
-
   StockDetailsPage(this.enity);
-
   @override
   State<StatefulWidget> createState() => new StockDetailsPageState(enity);
 }
@@ -51,11 +51,23 @@ class StockDetailsPageState extends State<StockDetailsPage>
       current_prices,
       today_open;
   String type, stock_code2, stock_code, stock_name;
-  
+
   String url = "";
   int index = 1;
   UserInfo userInfo;
-  String host = "127.0.0.1:9527";
+  String host = "47.75.33.6";
+  Setting setting;
+
+  List isCheck = [false, false, false, false];
+
+  List<int> _sub = [];
+
+  List<int> beishuList = [];
+
+  Iterable<Widget> get actorWidgets sync* {}
+  int _selected = 100;
+  int _selectedBei = 5;
+
   StockDetailsPageState(this.enity);
 
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
@@ -104,6 +116,20 @@ class StockDetailsPageState extends State<StockDetailsPage>
   }
 
   void initData() {
+    GetSettings().then((res){
+      print(res.data);
+      if (res.code == 1000){
+        setState(() {
+          setting = Setting.fromJson(res.data);
+          setting.credit.split(",").forEach((e){
+            _sub.add(int.parse(e));
+          });
+          setting.multiple.split(",").forEach((v){
+            beishuList.add(int.parse(v));
+          });
+        });
+      }
+    });
     if ("stock" == type) {
       Stock stock = enity.data;
       stock_name = stock.name;
@@ -114,7 +140,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
       gains = stock.gains;
 
       setState(() {
-        url = "http://$host/marker/timeline/$stock_code";
+        url = "http://$host/api/client/marker/timeline/$stock_code";
       });
       yesterday_close = double.parse(stock.yesterday_close);
       current_prices = double.parse(stock.current_prices);
@@ -186,6 +212,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
         onPressed: () {
           flutterWebviewPlugin.hide();
           showMyDialogWithStateBuilder(context, enity.data, userInfo);
+
         },
         color: UIData.primary_color,
         child: Container(
@@ -232,8 +259,8 @@ class StockDetailsPageState extends State<StockDetailsPage>
         print(i);
         setState(() {
           url = i == 1
-              ? "http://$host/marker/timeline/$stock_code"
-              : "http://$host/marker/kline/$stock_code";
+              ? "http://$host/api/client/marker/timeline/$stock_code"
+              : "http://$host/api/client/marker/kline/$stock_code";
         });
       },
     );
@@ -438,23 +465,6 @@ class StockDetailsPageState extends State<StockDetailsPage>
     );
   }
 
-  List isCheck = [false, false, false, false];
-
-  List<int> _sub = <int>[
-    1000,
-    5000,
-    10000,
-    20000,
-    30000,
-    40000,
-    50000,
-  ];
-
-  List<int> beishuList = <int>[5, 6, 7, 8];
-
-  Iterable<Widget> get actorWidgets sync* {}
-  int _selected = 100;
-  int _selectedBei = 5;
 
   //显示对话框 添加策略
   void showMyDialogWithStateBuilder(
@@ -472,11 +482,12 @@ class StockDetailsPageState extends State<StockDetailsPage>
           return new AlertDialog(
             contentPadding: EdgeInsets.fromLTRB(15, 15, 15, 15),
             content: StatefulBuilder(builder: (context, StateSetter setState) {
+
               List<Widget> widgetList = new List();
               for (int choiceSub in _sub) {
                 widgetList.add(ChoiceChip(
-                  backgroundColor: Colors.red,
-                  disabledColor: Colors.blue,
+                  backgroundColor: Colors.black12,
+                  selectedColor: Colors.red,
                   label: Text(
                     '$choiceSub',
                     style:
@@ -496,17 +507,16 @@ class StockDetailsPageState extends State<StockDetailsPage>
               }
 
               List<Widget> beishuListW = new List();
-              widgetList.add(Text(
-                "策略倍数: ",
+              beishuListW.add(Text(
+                "  策略倍数: ",
                 style: TextStyle(fontSize: 14),
               ));
               for (int choiceSub in beishuList) {
-                widgetList.add(ChoiceChip(
-                  backgroundColor: Colors.red,
-                  disabledColor: Colors.blue,
+                beishuListW.add(ChoiceChip(
+                  backgroundColor: Colors.black12,
+                  selectedColor: Colors.red,
                   label: Text('$choiceSub'),
-                  labelStyle:
-                      TextStyle(fontWeight: FontWeight.w500, fontSize: 13.0),
+                  labelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 13.0),
                   labelPadding: EdgeInsets.only(left: 10.0, right: 10.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   onSelected: (bool value) {
@@ -532,12 +542,12 @@ class StockDetailsPageState extends State<StockDetailsPage>
               } else {
                 stockCount = 0;
               }
-              String liyong = (stockCount *
+              String liYong = (stockCount *
                       double.parse(stock.current_prices) /
                       amount *
                       100)
                   .toStringAsFixed(2);
-              double liyonngCount = double.parse(liyong);
+              double liYongCount = double.parse(liYong);
 
               return Container(
                 width: wWidth,
@@ -548,8 +558,9 @@ class StockDetailsPageState extends State<StockDetailsPage>
                     name,
                     _selected,
                     amount,
+                    userInfo,
                     stockCount,
-                    liyonngCount,
+                    liYongCount,
                     priceController,
                     widgetList,
                     beishuListW),
@@ -596,7 +607,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
                     }
                     Navigator.of(context).pop();
                   }).then((res) {
-                    ShowToast("网络出错");
+//                    ShowToast("网络出错");
                   });
                 },
               ),
@@ -630,23 +641,11 @@ class StockDetailsPageState extends State<StockDetailsPage>
             today_open = double.parse(stock.today_open);
           });
           if (request_type == 2) {
-            Fluttertoast.showToast(
-                msg: "刷新成功",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIos: 1,
-                backgroundColor: Colors.red,
-                textColor: Colors.red);
+            ShowToast("刷新成功");
           }
         });
       }).catchError((e) {
-        Fluttertoast.showToast(
-            msg: "网络异常，请检查",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.red);
+        ShowToast("网络异常，请检查");
       });
     }
   }

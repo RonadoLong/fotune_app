@@ -16,6 +16,7 @@ class StockSearchPage extends StatefulWidget {
 class StockSearchPageState extends State<StockSearchPage> {
   List<SearchStock> list = [];
   String key = "";
+  bool pushing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +32,14 @@ class StockSearchPageState extends State<StockSearchPage> {
                 SearchStock s = list[index - 1];
                 return GestureDetector(
                     onTap: () {
-//                      UserID string `json:"userId"`
-//                      Code   string `json:"code"`
-//                      Name   string `json:"name"`
+
+                      if (this.pushing) {
+                        return;
+                      }
+
+                      setState(() {
+                        this.pushing = true;
+                      });
 
                       User user = GetLocalUser();
                       if (user != null) {
@@ -43,13 +49,22 @@ class StockSearchPageState extends State<StockSearchPage> {
                           "name": s.name
                         };
                         AddStock(query).then((res) {
+                          setState(() {
+                            this.pushing = false;
+                          });
                           if (res.code == 1000) {
                             ShowToast("已添加到自选");
+                            setState(() {
+                              list = [];
+                            });
                           } else {
                             ShowToast("添加失败");
                           }
                         }).catchError((err) {
-                          ShowToast("网络出错");
+                          setState(() {
+                            this.pushing = false;
+                          });
+//                          ShowToast("网络出错");
                         });
                       }
                     },
@@ -90,7 +105,7 @@ class StockSearchPageState extends State<StockSearchPage> {
         ShowToast("没有找到数据");
       }
     }).catchError((err) {
-      ShowToast("网络出错");
+//      ShowToast("网络出错");
     });
   }
 

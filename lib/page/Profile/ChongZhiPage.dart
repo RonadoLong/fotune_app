@@ -27,7 +27,7 @@ class ChongZhiPageState extends State<ChongZhiPage> {
   @override
   void initState() {
     super.initState();
-    loadData();
+    this.loadData();
   }
 
   loadData() {

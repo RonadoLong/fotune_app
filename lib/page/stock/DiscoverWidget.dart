@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 const kAndroidUserAgent =
@@ -25,6 +26,7 @@ Widget buildContent(
     String name,
     int price,
     int amount,
+    UserInfo user,
     int stockCount,
     double liyonngCount,
     TextEditingController cr,
@@ -41,28 +43,8 @@ Widget buildContent(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // new Padding(
-          //     padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-          //     child: Center(
-          //         child: new Text(title,
-          //             style: new TextStyle(
-          //               fontSize: 16.0,
-          //             )))),
-          // Container(
-          //   margin: EdgeInsets.only(top: 2),
-          //   height: 1,
-          //   color: UIData.primary_color,
-          // ),
-          renderHeader(name, code, 111.11),
-          // renderHeader,
-          Padding(
-            padding: EdgeInsets.all(2),
-          ),
           Row(
             children: <Widget>[
-              // Padding(
-              //   padding: EdgeInsets.only(right: 10),
-              // ),
               Text(
                 "信用金: ",
                 style: TextStyle(color: UIData.normal_font_color, fontSize: 14),
@@ -95,29 +77,31 @@ Widget buildContent(
           Padding(
             padding: EdgeInsets.all(4),
           ),
-          Container(
+          SizedBox(
             child: Wrap(
               spacing: 6.0, // gap between adjacent chips
               runSpacing: 2.0, // gap between lines
               children: checkList,
               crossAxisAlignment: WrapCrossAlignment.center,
-              runAlignment: WrapAlignment.spaceBetween,
+              runAlignment: WrapAlignment.spaceEvenly,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(4),
+          ),
+          SizedBox(
+            child: Wrap(
+              spacing: 2.0, // gap between adjacent chips
+              runSpacing: 2.0,
+              children: beiList,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.spaceAround,
             ),
           ),
           Padding(
             padding: EdgeInsets.all(4),
           ),
           Container(
-            margin: EdgeInsets.only(top: 10),
-            child: Wrap(
-              spacing: 2.0, // gap between adjacent chips
-              runSpacing: 2.0,
-              children: beiList,
-              alignment: WrapAlignment.spaceAround,
-            ),
-          ),
-          Container(
-            // margin: EdgeInsets.only(left: 10),
             child: Row(
               children: <Widget>[
                 Text(
@@ -222,7 +206,7 @@ Widget buildContent(
   );
 }
 
-Container renderHeader(String codeName, String code, double amount) {
+Container renderHeader(String codeName, String code, var amount) {
   return Container(
     color: Colors.white,
     child: Column(
@@ -242,20 +226,6 @@ Container renderHeader(String codeName, String code, double amount) {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              // Text(
-              //   "代号: $code",
-              //   style: TextStyle(
-              //       color: UIData.primary_color,
-              //       fontSize: 14.0,
-              //       fontWeight: FontWeight.w500),
-              // ),
-              Text(
-                "账户资金: ",
-                style: TextStyle(
-                    color: UIData.normal_font_color,
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w500),
-              ),
                Text(
                 "$amount 元",
                 style: TextStyle(

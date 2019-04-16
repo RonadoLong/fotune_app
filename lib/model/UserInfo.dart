@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 @JsonSerializable()
 class UserInfoResp {
   String msg;
-  int code;
+  var code;
   UserInfo data;
 
   UserInfoResp({
@@ -37,8 +37,8 @@ class UserInfo {
   String idCard;
   String createdAt;
   String updatedAt;
-  int status;
-  double amount;
+  var status;
+  var amount;
 
   UserInfo({
     this.id,

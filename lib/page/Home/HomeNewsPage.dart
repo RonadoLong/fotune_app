@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fotune_app/api/home.dart';
 import 'package:fotune_app/componets/news/ListImageRight.dart';
 import 'package:fotune_app/page/Home/NewsDetailsPage.dart';
@@ -151,7 +150,7 @@ class HomeNewsPageState extends State<HomeNewsPage>
         ShowToast("没有更多数据了");
       }
     }).catchError((err) {
-      ShowToast("网络出错");
+//      ShowToast("网络出错");
       setState(() {
         newsLists = [];
       });

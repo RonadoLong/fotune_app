@@ -46,6 +46,9 @@ User GetLocalUser() {
     return null;
   }
   var json = SpUtil.getObject("userInfo");
+  if (json == null) {
+    return null;
+  }
   return User.fromJson(json);
 }
 

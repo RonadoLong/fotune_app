@@ -25,7 +25,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
   List<Strategy> strategyList;
   final ScrollController _scrollController = new ScrollController();
   User user;
-  int pageNum = 1;
+  int pageNum = 0;
   int pageSize = 20;
   bool isShowMore;
 
@@ -70,7 +70,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
           });
         } else if (res.code == 1004) {
           setState(() {
-            strategyList = [];
+            strategyList = strategyList == null ? [] : strategyList;
           });
         }
       });
@@ -114,6 +114,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);//必须添加
     return Scaffold(
       body: Center(
         child: buildBody(),
@@ -127,6 +128,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
     var stockCount = strategy.count;
 
     return Container(
+      color: Colors.white,
       child: Column(
         children: <Widget>[
           Container(
@@ -225,7 +227,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
                       Text(
                         strategy.profit.toString(),
                         style: TextStyle(
-                            color: UIData.primary_color,
+                            color: strategy.profit.toString().indexOf("-") != -1 ? Colors.green: Colors.red,
                             fontWeight: FontWeight.w600),
                       ),
                       Padding(padding: EdgeInsets.all(10)),
@@ -233,7 +235,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
                   ),
                 ),
                 ButtonTheme(
-                  buttonColor: UIData.primary_color,
+                  buttonColor: Colors.red,
                   minWidth: 60.0,
                   height: 30.0,
                   child: RaisedButton(
@@ -258,11 +260,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
                 children: <Widget>[
                   buildCell("买入时间", strategy.Detail.buyTime),
                   buildCell("交易单号", strategy.Detail.orderNo),
-                  buildCell(
-                      "保证金", (strategy.Detail.creditAmount).toString() + "元"),
+                  buildCell("保证金", (strategy.Detail.creditAmount).toString() + "元"),
                   buildCell("止损线", strategy.Detail.stopLoss.toString() + "元"),
-                  buildCell(
-                      "浮动赢亏比", strategy.Detail.floatProfit.toString() + "%"),
+                  buildCell("浮动赢亏比", strategy.Detail.floatProfit.toString()),
                   Container(
                     color: Colors.white,
                     margin: EdgeInsets.all(6),
@@ -280,7 +280,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
                               Text(
                                 " " + strategy.profit.toString(),
                                 style: TextStyle(
-                                    color: UIData.primary_color,
+                                    color: strategy.profit.toString().indexOf("-") != -1 ? Colors.green: Colors.red,
                                     fontWeight: FontWeight.w600),
                               ),
                             ],
@@ -361,9 +361,8 @@ class MyStrategyPageState extends State<MyStrategyPage>
       } else {
         ShowToast("操作失败");
       }
-    }).then((err) {
+    }).catchError((err) {
       print(err);
-      ShowToast("操作失败");
     });
   }
 
@@ -418,6 +417,20 @@ class MyStrategyPageState extends State<MyStrategyPage>
                     return;
                   }
                   print(phoneController.text);
+                  var req = {
+                    "uid": user.user_id,
+                    "strategyId": id,
+                    "creditAmount": double.parse(phoneController.text)
+                  };
+                  AddCredit(req).then((res){
+                    if (res.code == 1000) {
+                      ShowToast("追加成功");
+                      Navigator.of(context).pop();
+                    }else {
+                      ShowToast("操作失败");
+                    }
+                  }).catchError((err) {
+                  });
                 },
               ),
             ],

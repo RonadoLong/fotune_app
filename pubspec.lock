@@ -42,7 +42,7 @@ packages:
       name: build_config
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.1+4"
+    version: "0.3.2"
   cached_network_image:
     dependency: "direct main"
     description:
@@ -63,7 +63,7 @@ packages:
       name: city_pickers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.14"
+    version: "0.1.16"
   collection:
     dependency: transitive
     description:
@@ -98,7 +98,7 @@ packages:
       name: csslib
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.6"
+    version: "0.15.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -170,10 +170,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "66987e0489ebafc7a16d51ae865105d41b427e2f"
+      resolved-ref: "5e24669acaf18fb4073856f22527191a0ef69288"
       url: "https://github.com/yangyxd/flutter_picker.git"
     source: git
-    version: "1.0.9"
+    version: "1.0.10"
   flutter_refresh:
     dependency: "direct main"
     description:
@@ -199,14 +199,14 @@ packages:
       name: flutter_webview_plugin
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0+2"
+    version: "0.3.3"
   fluttertoast:
     dependency: "direct main"
     description:
       name: fluttertoast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.3"
   front_end:
     dependency: transitive
     description:
@@ -234,14 +234,14 @@ packages:
       name: html
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.4+1"
+    version: "0.13.4+2"
   http:
     dependency: transitive
     description:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.0+1"
+    version: "0.12.0+2"
   http_parser:
     dependency: transitive
     description:

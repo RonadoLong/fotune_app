@@ -43,7 +43,7 @@ class BankPageState extends State<BankPage> {
         });
       }
     }).catchError((err) {
-      ShowToast("网络出错");
+//      ShowToast("网络出错");
     });
   }
 
