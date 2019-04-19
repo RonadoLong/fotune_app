@@ -31,9 +31,11 @@ Widget buildContent(
     double liyonngCount,
     TextEditingController cr,
     List<Widget> checkList,
-    List<Widget> beiList) {
+    List<Widget> beiList,
+    Function showProtocol) {
   return SingleChildScrollView(
     child: Container(
+      padding: EdgeInsets.all(10),
       decoration: ShapeDecoration(
           color: Color(0xFFFFFFFF),
           shape: RoundedRectangleBorder(
@@ -172,23 +174,38 @@ Widget buildContent(
             style: TextStyle(color: Colors.redAccent, fontSize: 14),
           ),//点买时间9:30-11:30, 13:00-14:58
         //点买时间9:30-11:30, 13:00-14:58
-          Container(
-            margin: EdgeInsets.only(top: 12),
-            child: Text("《策略人参与沪深A股交易合作涉及费用及资费标准》",
-                style:
-                    TextStyle(color: Colors.cyan, fontSize: 12)),
+          GestureDetector(
+            onTap: (){
+              showProtocol(1);
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 12),
+              child: Text("《策略人参与沪深A股交易合作涉及费用及资费标准》",
+                  style:
+                  TextStyle(color: Colors.cyan, fontSize: 12)),
+            ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 6),
-            child: Text("《策略人参与沪深A股交易合作涉及费用及资费标准》",
-                style:
-                    TextStyle(color: Colors.cyan, fontSize: 12)),
+          GestureDetector(
+            onTap: (){
+              showProtocol(2);
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 12),
+              child: Text("《财富通投资人与点买人参与沪深A股交易合作协议》",
+                  style:
+                  TextStyle(color: Colors.cyan, fontSize: 12)),
+            ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 6),
-            child: Text("《策略人参与沪深A股交易合作涉及费用及资费标准》",
-                style:
-                    TextStyle(color: Colors.cyan, fontSize: 12)),
+          GestureDetector(
+            onTap: (){
+              showProtocol(3);
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 12),
+              child: Text("《财富通服务协议》",
+                  style:
+                  TextStyle(color: Colors.cyan, fontSize: 12)),
+            ),
           ),
           Container(
             child: RadioListTile<String>(

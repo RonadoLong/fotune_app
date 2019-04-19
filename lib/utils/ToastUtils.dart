@@ -8,6 +8,6 @@ ShowToast(msg) {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
       timeInSecForIos: 1,
-      backgroundColor: Color.fromARGB(230, 112, 128, 144),
+      backgroundColor: Color.fromARGB(230, 112, 128, 170),
       textColor: Colors.white);
 }

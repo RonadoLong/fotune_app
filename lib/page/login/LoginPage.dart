@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/FInputWidget.dart';
+import 'package:fotune_app/page/login/ForgetPWDPage.dart';
 import 'package:fotune_app/store/LocalStorage.dart';
 import 'package:fotune_app/utils/MD5Utils.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
@@ -64,6 +65,13 @@ class _LoginPageState extends State<LoginPage> {
                         print(value);
                       },
                       controller: _userPassController,
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                            context, new MaterialPageRoute(builder: (context) => new ForgetPWDPage()));
+                      },
+                      child: Text("忘记密码?"),
                     ),
                     new Padding(padding: new EdgeInsets.all(30.0)),
                     new Container(

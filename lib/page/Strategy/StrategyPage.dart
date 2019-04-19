@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fotune_app/page/Strategy/CreateStrategyPage.dart';
 import 'package:fotune_app/page/Strategy/FinishStrategyPage.dart';
 import 'package:fotune_app/page/Strategy/MyStrategyPage.dart';
 import 'package:fotune_app/utils/UIData.dart';
@@ -22,6 +23,7 @@ class StrategyPage extends StatelessWidget {
             bottom: TabBar(
               indicatorColor: Colors.white,
               tabs: [
+//                Tab(text: "创建策略"),
                 Tab(text: "我的策略"),
                 Tab(text: "结算策略"),
               ],
@@ -29,6 +31,7 @@ class StrategyPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
+//              CreateStrategyPage(null),
               MyStrategyPage(),
               FinishStrategyPage(),
             ],

@@ -4,6 +4,7 @@ import 'package:fotune_app/model/User.dart';
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
 const PROHOST = "http://47.75.33.6";
 const DEVHOST = "http://127.0.0.1:9527";
+String host = inProduction ? PROHOST : DEVHOST;
 
 class Http {
   static Http instance;
@@ -11,7 +12,6 @@ class Http {
   static Dio _dio;
   static const CONTENT_TYPE_JSON = "application/json";
   static const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
-  static String host = inProduction ? PROHOST : DEVHOST;
 
   BaseOptions _options;
 

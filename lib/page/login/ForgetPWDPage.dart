@@ -8,16 +8,17 @@ import 'package:fotune_app/componets/LoginFormCode.dart';
 import 'package:fotune_app/utils/MD5Utils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:crypto/crypto.dart';
 
-
-class RegisterPage extends StatefulWidget {
+class ForgetPWDPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new _RegisterPageState();
+    return new _ForgetPWDPageState();
   }
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _ForgetPWDPageState extends State<ForgetPWDPage> {
   var leftRightPadding = 20.0;
   var topBottomPadding = 4.0;
   var textTips = new TextStyle(fontSize: 13.0, color: Colors.black);
@@ -25,20 +26,15 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isCanGetCode = false;
   bool isLogin = false;
 
-//  static const LOGO = "images/oschina.png";
-
   var _userPassController = new TextEditingController();
-  var _userNameController = new TextEditingController();
   var _phoneController = new TextEditingController();
   var _codeController = new TextEditingController();
-  var _recommendController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomWidget.BuildAppBar("注册", context),
+      appBar: CustomWidget.BuildAppBar("忘记密码", context),
       body: new Container(
-//        color: UIData.primary_color,
         child: new Center(
           //防止overFlow的现象
           child: SafeArea(
@@ -63,36 +59,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     new Padding(padding: new EdgeInsets.all(4.0)),
                     new FInputWidget(
-                      hintText: "姓名",
-                      iconData: Icons.account_circle,
-                      onChanged: (String value) {
-                        var ret = value.length >= 11 ? true : false;
-                        setState(() {
-                          isCanGetCode = ret;
-                          print(isCanGetCode);
-                        });
-                      },
-                      controller: _userNameController,
-                    ),
-                    new Padding(padding: new EdgeInsets.all(4.0)),
-                    new FInputWidget(
-                      hintText: "密码",
+                      hintText: "新密码",
                       iconData: Icons.security,
                       obscureText: true,
                       onChanged: (String value) {
                         print(value);
                       },
                       controller: _userPassController,
-                    ),
-                    new Padding(padding: new EdgeInsets.all(4.0)),
-                    new FInputWidget(
-                      hintText: "机构码",
-                      iconData: Icons.security,
-                      obscureText: true,
-                      onChanged: (String value) {
-                        print(value);
-                      },
-                      controller: _recommendController,
                     ),
                     new Padding(padding: new EdgeInsets.all(4.0)),
                     Container(
@@ -154,13 +127,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               var password = _userPassController.text.trim();
                               var phone = _phoneController.text.trim();
                               var code = _codeController.text.trim();
-                              var username = _userNameController.text.trim();
-                              var institutionalCode =
-                                  _recommendController.text.trim();
 
-                              if (password.length == 0 ||
-                                  phone.length == 0 ||
-                                  username.length == 0) {
+                              if (password.length == 0 || phone.length == 0 ) {
                                 ShowToast("请完善信息");
                                 return;
                               }
@@ -172,9 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               var params = {
                                 "phone": phone,
                                 "password": pwd,
-                                "username": username,
                                 "phoneCode": code,
-                                "institutionalCode": institutionalCode
                               };
                               if (isLogin) {
                                 return;
@@ -185,17 +151,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               RegisterUser(params).then((res) {
                                 print(res);
                                 if (res.code == 1000) {
-                                  ShowToast("注册成功");
+                                  ShowToast("修改成功");
                                   Navigator.of(context).pop();
                                 } else {
-                                  ShowToast("注册失败，请重试");
+                                  ShowToast(res.msg);
                                 }
                                 setState(() {
                                   isLogin = !isLogin;
                                 });
                               }).catchError((err) {
                                 print(err);
-                                ShowToast("注册失败，请重试");
                                 setState(() {
                                   isLogin = !isLogin;
                                 });
@@ -204,7 +169,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: new Padding(
                               padding: new EdgeInsets.all(6.0),
                               child: new Text(
-                                '马上注册',
+                                '重置密码',
                                 style: new TextStyle(
                                     color: Colors.white, fontSize: 16.0),
                               ),

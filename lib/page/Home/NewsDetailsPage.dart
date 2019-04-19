@@ -36,7 +36,7 @@ class NewsDetailsPageState extends State<NewsDetailsPage> {
         child: new Center(
           child: Column(
             children: <Widget>[
-              Container(
+              title != "" ? Container(
                 margin: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0.0),
                 child: Text(title,
                     style: new TextStyle(
@@ -44,7 +44,7 @@ class NewsDetailsPageState extends State<NewsDetailsPage> {
                         fontWeight: FontWeight.w700,
                         color: Colors.black)),
                 alignment: FractionalOffset.center,
-              ),
+              ) : Container(),
               Html(
                 data: content,
                 padding: EdgeInsets.all(8.0),

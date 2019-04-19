@@ -3,19 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fotune_app/api/HttpUtils.dart';
 import 'package:fotune_app/api/Setting.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/ListEnity.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
+import 'package:fotune_app/page/stock/AddStrategyPage.dart';
 import 'package:fotune_app/page/stock/DiscoverWidget.dart';
+import 'package:fotune_app/page/stock/HtmlWidget.dart';
 import 'package:fotune_app/page/stock/SelectedWidget.dart';
+import 'package:fotune_app/page/stock/StockSearchPage.dart';
 import 'package:fotune_app/page/stock/model/Setting.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 
 import 'package:fotune_app/utils/Compute.dart';
+import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
@@ -37,8 +42,7 @@ class StockDetailsPage extends StatefulWidget {
   State<StatefulWidget> createState() => new StockDetailsPageState(enity);
 }
 
-class StockDetailsPageState extends State<StockDetailsPage>
-    with SingleTickerProviderStateMixin {
+class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerProviderStateMixin {
   ListEnity enity;
   List StockComments = [];
   List<SellAndBuy> sellList = [];
@@ -55,19 +59,14 @@ class StockDetailsPageState extends State<StockDetailsPage>
   String url = "";
   int index = 1;
   UserInfo userInfo;
-  String host = "47.75.33.6";
   Setting setting;
+  Stock stock;
 
   bool loading = false;
 
-  List isCheck = [false, false, false, false];
-
-  List<int> _sub = [];
-  List<int> beishuList = [];
-
   Iterable<Widget> get actorWidgets sync* {}
-  int _selected = 100;
-  int _selectedBei = 5;
+
+  bool isShow = false;
 
   StockDetailsPageState(this.enity);
 
@@ -92,8 +91,8 @@ class StockDetailsPageState extends State<StockDetailsPage>
     initData();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  loadHTML() {
+    print(url);
     flutterWebviewPlugin.launch(
       url,
       clearCache: true,
@@ -101,6 +100,17 @@ class StockDetailsPageState extends State<StockDetailsPage>
       rect: new Rect.fromLTWH(
           0.0, 210.0, MediaQuery.of(context).size.width, 270.0),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isShow) {
+      this.loadHTML();
+    }
+
+    setState(() {
+      isShow = true;
+    });
 
     Widget body = userInfo == null
         ? Center(
@@ -117,20 +127,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
   }
 
   void initData() {
-    GetSettings().then((res){
-      print(res.data);
-      if (res.code == 1000){
-        setState(() {
-          setting = Setting.fromJson(res.data);
-          setting.credit.split(",").forEach((e){
-            _sub.add(int.parse(e));
-          });
-          setting.multiple.split(",").forEach((v){
-            beishuList.add(int.parse(v));
-          });
-        });
-      }
-    });
+
     if ("stock" == type) {
       Stock stock = enity.data;
       stock_name = stock.name;
@@ -141,7 +138,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
       gains = stock.gains;
 
       setState(() {
-        url = "http://$host/api/client/marker/timeline/$stock_code";
+        url = "$host/api/client/marker/timeline/$stock_code";
       });
       yesterday_close = double.parse(stock.yesterday_close);
       current_prices = double.parse(stock.current_prices);
@@ -171,6 +168,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
         if (res.code == 1000) {
           setState(() {
             userInfo = res.data;
+            stock = stock;
           });
         }
       });
@@ -198,7 +196,8 @@ class StockDetailsPageState extends State<StockDetailsPage>
     );
   }
 
-  ShowMainWidget() {
+   // ignore: non_constant_identifier_names
+   ShowMainWidget() {
     if ("stock" == type) {
       return <Widget>[TopMarket(), getKline(), getSellAndBuy(), buildBottom()];
     } else {
@@ -212,8 +211,16 @@ class StockDetailsPageState extends State<StockDetailsPage>
       child: RaisedButton(
         onPressed: () {
           flutterWebviewPlugin.hide();
-          showMyDialogWithStateBuilder(context, enity.data, userInfo);
-
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => AddStrategyPage(enity.data, userInfo))).then((res){
+                    print("返回的回调 ======================== $res");
+                    setState(() {
+                      isShow = false;
+                    });
+                    this.loadHTML();
+          });
         },
         color: UIData.primary_color,
         child: Container(
@@ -257,11 +264,11 @@ class StockDetailsPageState extends State<StockDetailsPage>
   Widget getKline() {
     return SelectedWidget(
       (i) {
-        print(i);
         setState(() {
+          isShow = false;
           url = i == 1
-              ? "http://$host/api/client/marker/timeline/$stock_code"
-              : "http://$host/api/client/marker/kline/$stock_code";
+              ? "$host/api/client/marker/timeline/$stock_code"
+              : "$host/api/client/marker/kline/$stock_code";
         });
       },
     );
@@ -467,177 +474,12 @@ class StockDetailsPageState extends State<StockDetailsPage>
   }
 
 
-  //显示对话框 添加策略
-  void showMyDialogWithStateBuilder(
-      BuildContext context, Stock stock, UserInfo userInfo) {
-    String code = stock == null ? "" : stock.stock_code2;
-    String name = stock == null ? "" : stock.name;
-    double wWidth = MediaQuery.of(context).size.width - 30;
-    double hh = MediaQuery.of(context).size.height - 60;
-    int amount = 0;
-    int stockCount = 0;
-
-    showDialog(
-        context: context,
-        builder: (context) {
-          return new AlertDialog(
-            contentPadding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-            content: StatefulBuilder(builder: (context, StateSetter setState) {
-
-              List<Widget> widgetList = new List();
-              for (int choiceSub in _sub) {
-                widgetList.add(ChoiceChip(
-                  backgroundColor: Colors.black12,
-                  selectedColor: Colors.red,
-                  label: Text(
-                    '$choiceSub',
-                    style:
-                        TextStyle(fontWeight: FontWeight.w500, fontSize: 12.0),
-                  ),
-                  labelStyle:
-                      TextStyle(fontWeight: FontWeight.w500, fontSize: 12.0),
-                  labelPadding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                  onSelected: (bool value) {
-                    setState(() {
-                      _selected = choiceSub;
-                    });
-                  },
-                  selected: _selected == choiceSub,
-                ));
-              }
-
-              List<Widget> beishuListW = new List();
-              beishuListW.add(Text(
-                "  策略倍数: ",
-                style: TextStyle(fontSize: 14),
-              ));
-              for (int choiceSub in beishuList) {
-                beishuListW.add(ChoiceChip(
-                  backgroundColor: Colors.black12,
-                  selectedColor: Colors.red,
-                  label: Text('$choiceSub'),
-                  labelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 13.0),
-                  labelPadding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  onSelected: (bool value) {
-                    setState(() {
-                      _selectedBei = value ? choiceSub : value;
-                    });
-                  },
-                  selected: _selectedBei == choiceSub,
-                ));
-              }
-
-              var priceController =
-                  new TextEditingController(text: '$_selected');
-              amount = _selected * _selectedBei;
-
-              // 操盘资金 / 限价 = 股数
-              double count = amount.ceilToDouble() /
-                  double.parse(stock.current_prices) /
-                  100;
-
-              if (count >= 1) {
-                stockCount = count.toInt() * 100;
-              } else {
-                stockCount = 0;
-              }
-              String liYong = (stockCount *
-                      double.parse(stock.current_prices) /
-                      amount *
-                      100)
-                  .toStringAsFixed(2);
-              double liYongCount = double.parse(liYong);
-
-              return Container(
-                width: wWidth,
-                height: hh,
-                child: buildContent(
-                    "添加策略",
-                    code,
-                    name,
-                    _selected,
-                    amount,
-                    userInfo,
-                    stockCount,
-                    liYongCount,
-                    priceController,
-                    widgetList,
-                    beishuListW),
-              );
-            }),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text(
-                  "取消",
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.black26,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  flutterWebviewPlugin.show();
-                },
-              ),
-              new FlatButton(
-                child: new Text("提交", style: TextStyle(color: Colors.white)),
-                color: UIData.primary_color,
-                onPressed: () {
-                  if (stockCount == 0) {
-                    ShowToast("股数不能为零");
-                    return;
-                  }
-
-                  if (userInfo.amount == 0) {
-                    ShowToast("您的账户余额不足请前往充值");
-                    return;
-                  }
-
-                  if (loading) {
-                    return;
-                  }
-
-                  setState(() {
-                    loading = true;
-                  });
-
-                  var addStrategyReq = {
-                    "uid": userInfo.id,
-                    "stockCode": stock.stock_code,
-                    "stockName": stock.name,
-                    "multiple": _selectedBei,
-                    "stockCount": stockCount,
-                  };
-                  print(addStrategyReq);
-                  AddStrategy(addStrategyReq).then((res) {
-                    setState(() {
-                      loading = false;
-                    });
-                    if (res.code == 1000) {
-                      ShowToast("添加成功");
-                    } else {
-                      ShowToast("添加失败");
-                    }
-                    Navigator.of(context).pop();
-                  }).then((res) {
-                    setState(() {
-                      loading = false;
-                    });
-//                    ShowToast("网络出错");
-                  });
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   Future<Null> pullToRefresh() async {
     getDatas(2);
     return null;
   }
 
-  void getDatas(int request_type) {
+  void getDatas(int requestType) {
     if ("stock" == type) {
       String url = "http://hq.sinajs.cn/list=" + stock_code2;
       fetch(url).then((data) {
@@ -656,7 +498,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
             current_prices = double.parse(stock.current_prices);
             today_open = double.parse(stock.today_open);
           });
-          if (request_type == 2) {
+          if (requestType == 2) {
             ShowToast("刷新成功");
           }
         });
@@ -672,22 +514,20 @@ class StockDetailsPageState extends State<StockDetailsPage>
     return str;
   }
 
-  /**
-   * 主要价格信息
-   */
+
   ShowPrices() {
-    Color show_color;
-    String gains_num =
+    Color showColor;
+    String gainsNum =
         ComputeGainsNum(yesterday_close, current_prices, today_open);
-    String gains_str = (gains * 100).toStringAsFixed(2) + "%";
+    String gainsStr = (gains * 100).toStringAsFixed(2) + "%";
     if (gains > 0) {
-      show_color = Colors.red;
-      gains_str = "+" + gains_str;
-      gains_num = "+" + gains_num;
+      showColor = Colors.red;
+      gainsStr = "+" + gainsStr;
+      gainsNum = "+" + gainsNum;
     } else if (gains < 0) {
-      show_color = Colors.green;
+      showColor = Colors.green;
     } else {
-      show_color = Colors.black38;
+      showColor = Colors.black38;
     }
     return new Container(
       padding: new EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
@@ -696,7 +536,7 @@ class StockDetailsPageState extends State<StockDetailsPage>
           Container(
             child: Text(
               current_prices.toStringAsFixed(2),
-              style: new TextStyle(fontSize: 24.0, color: show_color),
+              style: new TextStyle(fontSize: 24.0, color: showColor),
             ),
             margin: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
             alignment: FractionalOffset.topLeft,
@@ -706,8 +546,8 @@ class StockDetailsPageState extends State<StockDetailsPage>
               Expanded(
                 child: Container(
                   child: Text(
-                    gains_num,
-                    style: new TextStyle(fontSize: 12.0, color: show_color),
+                    gainsNum,
+                    style: new TextStyle(fontSize: 12.0, color: showColor),
                     textAlign: TextAlign.left,
                   ),
                   alignment: FractionalOffset.bottomLeft,
@@ -717,8 +557,8 @@ class StockDetailsPageState extends State<StockDetailsPage>
               Expanded(
                 child: Container(
                   child: Text(
-                    gains_str,
-                    style: new TextStyle(fontSize: 12.0, color: show_color),
+                    gainsStr,
+                    style: new TextStyle(fontSize: 12.0, color: showColor),
                     textAlign: TextAlign.left,
                   ),
                   alignment: FractionalOffset.bottomLeft,

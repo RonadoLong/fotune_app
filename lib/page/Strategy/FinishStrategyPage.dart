@@ -56,10 +56,11 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
       GetCloseList(user.user_id, pageNum, pageSize).then((res) {
         if (res.code == 1000) {
           setState(() {
-            if (type != LOADMORE_REQIEST) {
-              dataList = res.data.strategys;
-            } else {
+            if (type == LOADMORE_REQIEST) {
               dataList.addAll(res.data.strategys);
+            } else {
+              dataList = res.data.strategys;
+              print(dataList.length);
             }
             pageNum = currentPage;
           });
@@ -71,11 +72,13 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
           }
         }
       }).catchError((err) {
+        print(err);
         setState(() {
           dataList = [];
         });
       });
     } else {
+      print("用户为登录");
       setState(() {
         dataList = [];
       });
@@ -105,7 +108,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
         onRefresh: (() => _handleRefresh()),
         color: UIData.refresh_color, //刷新控件的颜色
         child: ListView.separated(
-          itemCount: dataList.length > 10 ? dataList.length + 1 : 0,
+          itemCount: dataList.length > 10 ? dataList.length + 1 : dataList.length,
           itemBuilder: (context, index) {
             CloseStrategys cs = dataList[index];
             if (index < dataList.length) {

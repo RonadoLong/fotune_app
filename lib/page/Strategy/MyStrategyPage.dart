@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
@@ -350,33 +351,85 @@ class MyStrategyPageState extends State<MyStrategyPage>
 
   // ignore: non_constant_identifier_names
   void ShellStrategy(Strategy strategy) {
-    if (loading) return;
+    DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
+    print(DateTime.now().day);
+    if (DateTime.now().day == dateTime.day && DateTime.now().month == dateTime.month) {
+      ShowToast("当天买入的股票下个工作日才能交易");
+      return;
+    }
+    this._showDialog(strategy);
+  }
 
-    setState(() {
-      loading = true;
-    });
+  void _showDialog(Strategy strategy) {
 
-    User user = GetLocalUser();
-    var query = {
-      "uid": user.user_id,
-      "strategyID": strategy.Detail.orderNo,
-      "closeType": 1,
-    };
-    QueryShellStrategy(query).then((res) {
-      setState(() {
-        loading = false;
-      });
-      if (res.code == 1000) {
-        ShowToast("操作成功");
-      } else {
-        ShowToast("操作失败");
-      }
-    }).catchError((err) {
-      print(err);
-      setState(() {
-        loading = false;
-      });
-    });
+    DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
+    String dateStr =
+    formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+
+    var content = Container(
+      height: 200,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text("交易品种: " + strategy.stockName + "(" + strategy.stockCode + ")"),
+          Text("卖出数量: " + strategy.count.toString() + "手"),
+          Text("买入时间: " + dateStr ),
+          Text("浮动盈亏: " + strategy.profit.toString()+ " (仅供参考)"),
+        ],
+      ),
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("确认卖出？"),
+          content: content,
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("取消", style: TextStyle(color: Colors.white),),
+              color: UIData.normal_font_color,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("确认",style: TextStyle(color: Colors.white),),
+              color: UIData.primary_color,
+              onPressed: () {
+                if (loading) return;
+                setState(() {
+                  loading = true;
+                });
+                User user = GetLocalUser();
+                var query = {
+                  "uid": user.user_id,
+                  "strategyID": strategy.Detail.orderNo,
+                  "closeType": 1,
+                };
+                QueryShellStrategy(query).then((res) {
+                  setState(() {
+                    loading = false;
+                  });
+                  if (res.code == 1000) {
+                    ShowToast("操作成功");
+                    loadData(REFRESH_REQIEST);
+
+                  } else {
+                    ShowToast(res.msg);
+                  }
+                }).catchError((err) {
+                  print(err);
+                  setState(() {
+                    loading = false;
+                  });
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   //显示对话框 添加策略

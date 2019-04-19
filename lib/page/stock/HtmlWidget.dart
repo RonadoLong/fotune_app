@@ -1,41 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-// import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
-
-const kAndroidUserAgent =
-    'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
 class HtmlWidget extends StatefulWidget {
-  String url;
-  int showIndex = 1;
-
-  HtmlWidget(
-    this.url,
-    this.showIndex,
-  );
-
   @override
-  State createState() {
-    return HtmlWidgetState();
-  }
+  _HtmlWidgetState createState() => _HtmlWidgetState();
 }
 
-class HtmlWidgetState extends State<HtmlWidget> {
-  final flutterWebviewPlugin = new FlutterWebviewPlugin();
+class _HtmlWidgetState extends State<HtmlWidget> {
+  TextEditingController controller = TextEditingController();
+  FlutterWebviewPlugin flutterWebviewPlugin = FlutterWebviewPlugin();
+  var urlString = "https://google.com";
 
-  @override
-  void dispose() {
-    super.dispose();
-    flutterWebviewPlugin.dispose();
+  launchUrl() {
+    setState(() {
+      urlString = controller.text;
+      flutterWebviewPlugin.reloadUrl(urlString);
+    });
   }
 
   @override
-  // ignore: missing_return
+  void initState() {
+    super.initState();
+
+    flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged wvs) {
+      print(wvs.type);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    flutterWebviewPlugin.launch(
-      widget.url,
-      rect: new Rect.fromLTWH(
-          0.0, 200.0, MediaQuery.of(context).size.width, 250.0),
+    return WebviewScaffold(
+      appBar: AppBar(
+        title: TextField(
+          autofocus: false,
+          controller: controller,
+          textInputAction: TextInputAction.go,
+          onSubmitted: (url) => launchUrl(),
+          style: TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "Enter Url Here",
+            hintStyle: TextStyle(color: Colors.white),
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.navigate_next),
+            onPressed: () => launchUrl(),
+          )
+        ],
+      ),
+      url: urlString,
+      withZoom: false,
     );
   }
 }

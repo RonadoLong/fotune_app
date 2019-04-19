@@ -183,14 +183,14 @@ class MarketPageState extends State<MarketPage>
     });
   }
 
-  void getDataIndex(int request_type) {
+  void getDataIndex(int requestType) {
     String url = "http://hq.sinajs.cn/list=s_sz399001,s_sz399006,s_sh000001";
     fetch(url).then((data) {
       setState(() {
-        List<String> index_strs = data.split(";");
+        List<String> indexStrs = data.split(";");
         setState(() {
-          for (int i = 0; i < (index_strs.length - 1); i++) {
-            String str = index_strs[i];
+          for (int i = 0; i < (indexStrs.length - 1); i++) {
+            String str = indexStrs[i];
             StockIndex stockIndex = new StockIndex();
             DealStockIndess(str, stockIndex);
             stockIndexs.add(stockIndex);
@@ -415,13 +415,15 @@ class MarketPageState extends State<MarketPage>
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
-              child: new Text("取消"),
+              child: new Text("取消", style: TextStyle(color: Colors.white),),
+              color: UIData.normal_font_color,
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             new FlatButton(
-              child: new Text("确认"),
+              child: new Text("确认", style: TextStyle(color: Colors.white),),
+              color: UIData.primary_color,
               onPressed: () {
                 if (loading) return;
                 setState(() {
@@ -439,6 +441,8 @@ class MarketPageState extends State<MarketPage>
                   if (res.code == 1000) {
                     this.loadData();
                     ShowToast("删除成功");
+                  } else {
+                    ShowToast(res.msg);
                   }
                 }).catchError((err){ setState(() {
                   setState(() {

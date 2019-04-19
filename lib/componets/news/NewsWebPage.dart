@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class NewsWebPage extends StatefulWidget {
-  String news_url;
+  String url;
   String title;
 
-  NewsWebPage(this.news_url, this.title);
+  NewsWebPage(this.url, this.title);
 
   @override
-  State<StatefulWidget> createState() => new NewsWebPageState(news_url, title);
+  State<StatefulWidget> createState() => new NewsWebPageState(url, title);
 }
 
 class NewsWebPageState extends State<NewsWebPage> {
-  String news_url;
+  String url;
   String title;
   // 标记是否是加载中
   bool loading = true;
@@ -29,7 +29,7 @@ class NewsWebPageState extends State<NewsWebPage> {
   // 插件提供的对象，该对象用于WebView的各种操作
   FlutterWebviewPlugin flutterWebViewPlugin = new FlutterWebviewPlugin();
 
-  NewsWebPageState(this.news_url, this.title);
+  NewsWebPageState(this.url, this.title);
 
   @override
   void initState() {
@@ -85,7 +85,7 @@ class NewsWebPageState extends State<NewsWebPage> {
     // WebviewScaffold是插件提供的组件，用于在页面上显示一个WebView并加载URL
     return new WebviewScaffold(
       key: scaffoldKey,
-      url: news_url, // 登录的URL
+      url: url, // 登录的URL
       appBar: new AppBar(
         title: new Row(
           mainAxisAlignment: MainAxisAlignment.center,

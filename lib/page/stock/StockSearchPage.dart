@@ -58,7 +58,7 @@ class StockSearchPageState extends State<StockSearchPage> {
                               list = [];
                             });
                           } else {
-                            ShowToast("添加失败");
+                            ShowToast(res.msg);
                           }
                         }).catchError((err) {
                           setState(() {

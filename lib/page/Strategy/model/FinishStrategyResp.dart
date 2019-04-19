@@ -23,13 +23,11 @@ class FinishStrategyResp {
 }
 
 class DataBean {
-  String paginator;
   List<CloseStrategys> strategys;
 
-  DataBean({this.paginator, this.strategys});
+  DataBean({ this.strategys});
 
   DataBean.fromJson(Map<String, dynamic> json) {
-    this.paginator = json['paginator'];
     this.strategys = (json['strategys'] as List) != null
         ? (json['strategys'] as List)
             .map((i) => CloseStrategys.fromJson(i))
@@ -39,7 +37,6 @@ class DataBean {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['paginator'] = this.paginator;
     data['strategys'] = this.strategys != null
         ? this.strategys.map((i) => i.toJson()).toList()
         : null;

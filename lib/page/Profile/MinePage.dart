@@ -30,7 +30,7 @@ class MinePageState extends State<MinePage> {
   ];
 //  var userAvatar = "https://image.showm.xin/wb/user/profile.jpg";
   var userAvatar =
-      "http://gp.axinmama.com/public/static/home/img/moblie/default-user-img5.png";
+      "https://image.showm.xin/wb/user/default-user-img5.png";
 
 //http://gp.axinmama.com/public/static/home/img/moblie/default-user-img5.png
 //  https://image.showm.xin/wb/user/ic_avatar_default.png
