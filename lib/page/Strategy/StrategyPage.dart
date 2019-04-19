@@ -32,8 +32,8 @@ class StrategyPage extends StatelessWidget {
           body: TabBarView(
             children: [
 //              CreateStrategyPage(null),
-              MyStrategyPage(),
-              FinishStrategyPage(),
+              MyStrategyPage(""),
+              FinishStrategyPage(""),
             ],
           ),
         ),

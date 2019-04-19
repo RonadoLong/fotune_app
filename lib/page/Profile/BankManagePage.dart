@@ -229,7 +229,7 @@ class BankManagePageState extends State<BankManagePage> {
           Padding(
             padding: EdgeInsets.only(top: 4),
           ),
-          Text("  3.如遇问题，请联系客服:13110765028 ", maxLines: 2),
+          Text("  3.如遇问题，请联系客服", maxLines: 2),
           Padding(
             padding: EdgeInsets.only(top: 40),
           ),

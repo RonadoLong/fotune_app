@@ -3,13 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
+import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Strategy/model/FinishStrategyResp.dart';
 import 'package:fotune_app/page/common/CommonWidget.dart';
 import 'package:fotune_app/utils/Constants.dart';
 import 'package:fotune_app/utils/UIData.dart';
+import 'package:date_format/date_format.dart';
 
 class FinishStrategyPage extends StatefulWidget {
+
+  String title;
+  FinishStrategyPage(title){
+    this.title = title;
+  }
+
   @override
   State createState() {
     return FinishStrategyPageState();
@@ -99,6 +107,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
   Widget build(BuildContext context) {
     super.build(context); //必须添加
     return Scaffold(
+      appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
         child: buildBody(),
       ),
@@ -152,8 +161,14 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
   }
 
   Widget buildBodyCell(CloseStrategys cs, int index) {
-    Color color =
-        cs.detail.tranProfit.indexOf("-") != -1 ? Colors.green : Colors.red;
+    Color color = cs.detail.tranProfit.indexOf("-") != -1 ? Colors.green : Colors.red;
+
+    DateTime buyTime = DateTime.parse(cs.detail.buyTime);
+    String buyTimeStr = formatDate(buyTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+
+    DateTime sellTime = DateTime.parse(cs.detail.sellTime);
+    String sellTimeStr = formatDate(sellTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+
     return Container(
         color: Colors.white,
         padding: EdgeInsets.all(20),
@@ -223,10 +238,10 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
                     children: <Widget>[
                       buildCell("交易单号", cs.id),
                       buildCell("交易本金", cs.detail.tranAmount.toString()),
-                      buildCell("买入时间", cs.detail.buyTime),
+                      buildCell("买入时间", buyTimeStr),
                       buildCell("买入类型", cs.detail.buyType),
                       buildCell("买入价格", cs.detail.buyPrice.toString() + '元'),
-                      buildCell("卖出时间", cs.detail.sellTime),
+                      buildCell("卖出时间", sellTimeStr),
                       buildCell("卖出价格", cs.detail.sellPrice.toString() + '元'),
                       buildCell("建仓费", cs.detail.buildingFee.toString() + '元'),
                       buildCell("平仓费", cs.detail.closingFee.toString() + '元'),

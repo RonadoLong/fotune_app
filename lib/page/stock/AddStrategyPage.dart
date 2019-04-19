@@ -222,10 +222,10 @@ class AddStrategyPageState extends State<AddStrategyPage> {
             });
             if (res.code == 1000) {
               ShowToast("添加成功");
-              Navigator.of(context).pop();
             } else {
               ShowToast(res.msg);
             }
+            Navigator.of(context).pop();
           }).catchError((res) {
             setState(() {
               loading = false;

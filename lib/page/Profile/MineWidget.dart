@@ -6,6 +6,8 @@ import 'package:fotune_app/page/Profile/BankPages.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/Profile/FundDetailsParentsPage.dart';
 import 'package:fotune_app/page/Profile/TiXianPage.dart';
+import 'package:fotune_app/page/Strategy/FinishStrategyPage.dart';
+import 'package:fotune_app/page/Strategy/MyStrategyPage.dart';
 import 'package:fotune_app/page/Strategy/StrategyPage.dart';
 import 'package:fotune_app/utils/ComstomBtnColumn.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
@@ -146,13 +148,13 @@ renderRow(
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) => new StrategyPage(cellTitle[i])));
+                  builder: (context) => new MyStrategyPage(cellTitle[i])));
           break;
         case 5:
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) => new StrategyPage(cellTitle[i])));
+                  builder: (context) => new FinishStrategyPage(cellTitle[i])));
           break;
       }
     },

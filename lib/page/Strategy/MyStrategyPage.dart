@@ -4,6 +4,7 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
+import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Strategy/model/StrategyResp.dart';
 import 'package:fotune_app/page/common/CommonWidget.dart';
@@ -12,6 +13,9 @@ import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 class MyStrategyPage extends StatefulWidget {
+  String title;
+  MyStrategyPage(title){this.title = title;}
+
   @override
   State createState() {
     return MyStrategyPageState();
@@ -134,6 +138,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
   Widget build(BuildContext context) {
     super.build(context);//必须添加
     return Scaffold(
+      appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
         child: buildBody(),
       ),
@@ -144,6 +149,10 @@ class MyStrategyPageState extends State<MyStrategyPage>
     var code = strategy.stockCode;
     var buyAmount = strategy.amount;
     var stockCount = strategy.count;
+
+    DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
+    String dateStr =
+    formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     return Container(
       color: Colors.white,
@@ -276,7 +285,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  buildCell("买入时间", strategy.Detail.buyTime),
+                  buildCell("买入时间", dateStr),
                   buildCell("交易单号", strategy.Detail.orderNo),
                   buildCell("保证金", (strategy.Detail.creditAmount).toString() + "元"),
                   buildCell("止损线", strategy.Detail.stopLoss.toString() + "元"),
