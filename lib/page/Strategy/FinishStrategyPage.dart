@@ -26,7 +26,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
   List<CloseStrategys> dataList;
   int pageNum = 1;
   int pageSize = 10;
-  bool isShowMore;
+  bool isShowMore = false;
 
   @override
   void initState() {
@@ -38,7 +38,11 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        print("========================================= load more");
+        if (dataList.length >= 10) {
+          setState(() {
+            isShowMore = true;
+          });
+        }
         loadData(LOADMORE_REQIEST);
       }
     });
@@ -54,18 +58,23 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
     if (user != null) {
       var currentPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetCloseList(user.user_id, pageNum, pageSize).then((res) {
+        setState(() {
+          isShowMore = false;
+        });
+
         if (res.code == 1000) {
           setState(() {
             if (type == LOADMORE_REQIEST) {
+              isShowMore = false;
               dataList.addAll(res.data.strategys);
             } else {
               dataList = res.data.strategys;
-              print(dataList.length);
             }
             pageNum = currentPage;
           });
         } else if (res.code == 1004) {
-          if (type != LOADMORE_REQIEST) {
+          if (type == LOADMORE_REQIEST) {
+          } else {
             setState(() {
               dataList = dataList == null ? [] : dataList;
             });
@@ -74,6 +83,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
       }).catchError((err) {
         print(err);
         setState(() {
+          isShowMore = false;
           dataList = [];
         });
       });
@@ -87,7 +97,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);//必须添加
+    super.build(context); //必须添加
     return Scaffold(
       body: Center(
         child: buildBody(),
@@ -100,16 +110,18 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
       return CircularProgressIndicator(
         backgroundColor: UIData.refresh_color,
       );
-    } else if (dataList.length == 0) {
-      return buildEmptyView();
     } else {
       return new RefreshIndicator(
-        backgroundColor: Colors.black12,
         onRefresh: (() => _handleRefresh()),
         color: UIData.refresh_color, //刷新控件的颜色
         child: ListView.separated(
-          itemCount: dataList.length > 10 ? dataList.length + 1 : dataList.length,
+          itemCount: dataList.length >= pageSize || dataList.length == 0
+              ? dataList.length + 1
+              : dataList.length,
           itemBuilder: (context, index) {
+            if (dataList.length == 0) {
+              return buildEmptyView();
+            }
             CloseStrategys cs = dataList[index];
             if (index < dataList.length) {
               return buildBodyCell(cs, index);

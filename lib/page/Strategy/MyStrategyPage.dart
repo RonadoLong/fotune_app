@@ -27,20 +27,23 @@ class MyStrategyPageState extends State<MyStrategyPage>
   final ScrollController _scrollController = new ScrollController();
   User user;
   int pageNum = 0;
-  int pageSize = 20;
-  bool isShowMore;
+  int pageSize = 10;
+  bool isShowMore = true;
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      user = GetLocalUser();
       loadData(START_REQUEST);
     });
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        if (strategyList.length >= pageSize) {
+          setState(() {
+            isShowMore = false;
+          });
+        }
         loadData(LOADMORE_REQIEST);
       }
     });
@@ -53,6 +56,8 @@ class MyStrategyPageState extends State<MyStrategyPage>
   }
 
   loadData(int reqType) {
+    User user = GetLocalUser();
+    print(" ===== GetStrategyList $user");
     if (user == null) {
       setState(() {
         strategyList = [];
@@ -60,7 +65,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
     } else {
       var currenPage = reqType == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetStrategyList(user.user_id, currenPage, pageSize).then((res) {
-        print(res.data.myStrategy);
+        setState(() {
+            isShowMore = true;
+        });
         if (res.code == 1000) {
           setState(() {
             if (reqType == LOADMORE_REQIEST) {
@@ -75,6 +82,12 @@ class MyStrategyPageState extends State<MyStrategyPage>
             strategyList = strategyList == null ? [] : strategyList;
           });
         }
+      }).catchError((err){
+        print(err);
+        setState(() {
+          isShowMore = true;
+          strategyList = [];
+        });
       });
     }
   }
@@ -84,24 +97,27 @@ class MyStrategyPageState extends State<MyStrategyPage>
       return CircularProgressIndicator(
         backgroundColor: UIData.refresh_color,
       );
-    } else if (strategyList.length == 0) {
-      return buildEmptyView();
-    } else {
+    }  else {
       return new RefreshIndicator(
           onRefresh: (() => _handleRefresh()),
           color: UIData.refresh_color, //刷新控件的颜色
           child: ListView.separated(
-            itemCount: strategyList.length,
+            itemCount: strategyList.length + 1,
             controller: _scrollController,
-            //用于监听是否滑到最底部
             itemBuilder: (context, index) {
-              if (index < strategyList.length) {
-                Strategy strategy = strategyList[index];
-                return GestureDetector(
-                  onTap: () {},
-                  child: buildListView(context, strategy),
-                );
-              }
+               if (strategyList.length == 0) {
+                 return buildEmptyView();
+               } else {
+                  if (index < strategyList.length) {
+                    Strategy strategy = strategyList[index];
+                    return GestureDetector(
+                      onTap: () {},
+                      child: buildListView(context, strategy),
+                    );
+                  } else {
+                    return Offstage(offstage: isShowMore, child: BuildLoadMoreView());
+                  }
+               }
             },
             physics: const AlwaysScrollableScrollPhysics(),
             separatorBuilder: (context, idx) {
@@ -412,9 +428,9 @@ class MyStrategyPageState extends State<MyStrategyPage>
                     loading = false;
                   });
                   if (res.code == 1000) {
-                    ShowToast("操作成功");
+                    ShowToast("卖出成功");
                     loadData(REFRESH_REQIEST);
-
+                    Navigator.of(context).pop();
                   } else {
                     ShowToast(res.msg);
                   }
@@ -478,7 +494,6 @@ class MyStrategyPageState extends State<MyStrategyPage>
                 color: UIData.primary_color,
                 onPressed: () {
                   if (loading) return;
-
                   setState(() {
                     loading = true;
                   });

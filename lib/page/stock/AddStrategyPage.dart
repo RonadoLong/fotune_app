@@ -192,8 +192,6 @@ class AddStrategyPageState extends State<AddStrategyPage> {
       print("error");
     }
 
-
-
   }
 
   Widget buildBottom() {
@@ -205,11 +203,9 @@ class AddStrategyPageState extends State<AddStrategyPage> {
             ShowToast("您的账户余额不足请前往充值");
             return;
           }
-
           if (loading) {
             return;
           }
-
           setState(() {
             loading = true;
           });
@@ -220,21 +216,21 @@ class AddStrategyPageState extends State<AddStrategyPage> {
             "multiple": currentSelectedBeiShu,
             "stockCount": stockCount,
           };
-          print(addStrategyReq);
           AddStrategy(addStrategyReq).then((res) {
             setState(() {
               loading = false;
             });
             if (res.code == 1000) {
               ShowToast("添加成功");
+              Navigator.of(context).pop();
             } else {
               ShowToast(res.msg);
             }
-          }).then((res) {
+          }).catchError((res) {
             setState(() {
               loading = false;
             });
-//                    ShowToast("网络出错");
+            ShowToast("网络出错，请重试");
           });
         },
         color: UIData.primary_color,

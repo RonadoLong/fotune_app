@@ -3,7 +3,6 @@ import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/FInputWidget.dart';
 import 'package:fotune_app/page/login/ForgetPWDPage.dart';
-import 'package:fotune_app/store/LocalStorage.dart';
 import 'package:fotune_app/utils/MD5Utils.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
@@ -23,8 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   var textTips = new TextStyle(fontSize: 16.0, color: Colors.black);
   var hintTips = new TextStyle(fontSize: 15.0, color: Colors.black26);
   bool isLoading = false;
-//  static const LOGO = "images/oschina.png";
-
   var _userPassController = new TextEditingController();
   var _userNameController = new TextEditingController();
 
@@ -33,7 +30,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: CustomWidget.BuildAppBar("登录", context),
       body: new Container(
-//        color: Colors.black12,
         child: new Center(
           //防止overFlow的现象
           child: SafeArea(
@@ -71,7 +67,14 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                             context, new MaterialPageRoute(builder: (context) => new ForgetPWDPage()));
                       },
-                      child: Text("忘记密码?"),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 40, top: 8),
+                            child: Text("忘记密码?", textAlign: TextAlign.left, style: TextStyle(color: UIData.primary_color),),
+                          )
+                      ],),
                     ),
                     new Padding(padding: new EdgeInsets.all(30.0)),
                     new Container(

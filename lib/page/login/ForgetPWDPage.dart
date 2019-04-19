@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/user.dart';
@@ -8,8 +7,7 @@ import 'package:fotune_app/componets/LoginFormCode.dart';
 import 'package:fotune_app/utils/MD5Utils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:crypto/crypto.dart';
+
 
 class ForgetPWDPage extends StatefulWidget {
   @override
@@ -101,7 +99,7 @@ class _ForgetPWDPageState extends State<ForgetPWDPage> {
                                   if (res.code == 1000) {
                                     ShowToast("获取成功");
                                   } else {
-                                    ShowToast("获取失败，请重试");
+                                    ShowToast(res.msg);
                                   }
                                 }).catchError((err) {
                                   print(err);
@@ -148,10 +146,10 @@ class _ForgetPWDPageState extends State<ForgetPWDPage> {
                               setState(() {
                                 isLogin = !isLogin;
                               });
-                              RegisterUser(params).then((res) {
+                              ForgetPWD(params).then((res) {
                                 print(res);
                                 if (res.code == 1000) {
-                                  ShowToast("修改成功");
+                                  ShowToast("修改成功，登录吧");
                                   Navigator.of(context).pop();
                                 } else {
                                   ShowToast(res.msg);

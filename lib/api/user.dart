@@ -8,7 +8,14 @@ import 'package:fotune_app/model/UserInfo.dart';
 Future<Response> RegisterUser(params) async {
   var url = "/user/register";
   var response = await Http().post(url, data: params);
-  print(response['code']);
+  var res = Response.fromJson(response);
+  return res;
+}
+
+// backPwd
+Future<Response> ForgetPWD(params) async {
+  var url = "/user/backPwd";
+  var response = await Http().put(url, data: params);
   var res = Response.fromJson(response);
   return res;
 }
