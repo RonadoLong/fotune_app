@@ -7,6 +7,7 @@ import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Strategy/model/FinishStrategyResp.dart';
 import 'package:fotune_app/page/common/CommonWidget.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/utils/Constants.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:date_format/date_format.dart';
@@ -24,10 +25,7 @@ class FinishStrategyPage extends StatefulWidget {
   }
 }
 
-class FinishStrategyPageState extends State<FinishStrategyPage>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class FinishStrategyPageState extends State<FinishStrategyPage>{
 
   final ScrollController _scrollController = new ScrollController();
   User user;
@@ -35,14 +33,14 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
   int pageNum = 1;
   int pageSize = 10;
   bool isShowMore = false;
+  var bus = new EventBus();
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      user = GetLocalUser();
-      loadData(START_REQUEST);
-    });
+
+    loadData(START_REQUEST);
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -54,6 +52,15 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
         loadData(LOADMORE_REQIEST);
       }
     });
+
+       // 监听登录事件
+    bus.on("login", (arg){
+       loadData(REFRESH_REQIEST);
+    });
+
+    bus.on("logout", (arg){
+       loadData(REFRESH_REQIEST);
+    });
   }
 
   @override
@@ -63,6 +70,10 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
   }
 
   loadData(int type) {
+    User user = GetLocalUser();
+      setState(() {
+        user = user;
+      });
     if (user != null) {
       var currentPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetCloseList(user.user_id, pageNum, pageSize).then((res) {
@@ -105,7 +116,6 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); //必须添加
     return Scaffold(
       appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
@@ -124,9 +134,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
         onRefresh: (() => _handleRefresh()),
         color: UIData.refresh_color, //刷新控件的颜色
         child: ListView.separated(
-          itemCount: dataList.length >= pageSize || dataList.length == 0
-              ? dataList.length + 1
-              : dataList.length,
+          itemCount: dataList.length + 1,
           itemBuilder: (context, index) {
             if (dataList.length == 0) {
               return buildEmptyView();
@@ -222,7 +230,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>
                       padding: EdgeInsets.all(4),
                     ),
                     Text(
-                      cs.detail.buyPrice.toString() + " 元",
+                      cs.profit.toString() + " 元",
                       style: TextStyle(color: color),
                     ),
                   ],

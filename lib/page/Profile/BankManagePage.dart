@@ -1,6 +1,6 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fotune_app/api/Setting.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/cell.dart';
@@ -31,6 +31,7 @@ class BankManagePageState extends State<BankManagePage> {
   String addStr = "请选择";
   String bankNormal = "请选择银行";
   bool isSumit;
+  List<PickerItem<dynamic>> _datas = [];
 
   Banks banks;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -43,11 +44,24 @@ class BankManagePageState extends State<BankManagePage> {
   @override
   void initState() {
     super.initState();
+    loadData();
+
     if (banks == null) {
       setState(() {
         banks = new Banks();
       });
     }
+  }
+
+  loadData() {
+    GetSettingsBanks().then((res){
+      if (res.code == 1000) {
+        for (var item in res.data) {
+          var picker = new PickerItem(text: buildBankText(item["name"]), value: item["name"]);
+          _datas.add(picker);
+        }
+      }
+    });
   }
 
   @override
@@ -72,15 +86,9 @@ class BankManagePageState extends State<BankManagePage> {
     });
   }
 
-  showPickerIcons(BuildContext context) {
+  showBanksPicker(BuildContext context) {
     Picker(
-        adapter: PickerDataAdapter(data: [
-          new PickerItem(text: buildBankText("中国银行"), value: "中国银行"),
-          new PickerItem(text: buildBankText("中国银行"), value: "中国银行"),
-          new PickerItem(text: buildBankText("中国银行"), value: "中国银行"),
-          new PickerItem(text: buildBankText("中国银行"), value: "中国银行"),
-          new PickerItem(text: buildBankText("中国银行"), value: "中国银行"),
-        ]),
+        adapter: PickerDataAdapter(data:_datas),
         height: 200,
         columnPadding: EdgeInsets.all(10),
         cancelText: "取消",
@@ -191,7 +199,7 @@ class BankManagePageState extends State<BankManagePage> {
             title: "开户银行",
             endText: banks.bankName == null ? bankNormal : banks.bankName,
             onTap: () {
-              showPickerIcons(context);
+              showBanksPicker(context);
             },
           ),
           SyCell(

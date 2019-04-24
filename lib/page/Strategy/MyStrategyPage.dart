@@ -8,6 +8,7 @@ import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Strategy/model/StrategyResp.dart';
 import 'package:fotune_app/page/common/CommonWidget.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/utils/Constants.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
@@ -22,10 +23,8 @@ class MyStrategyPage extends StatefulWidget {
   }
 }
 
-class MyStrategyPageState extends State<MyStrategyPage>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class MyStrategyPageState extends State<MyStrategyPage>{
+
 
   List<Strategy> strategyList;
   final ScrollController _scrollController = new ScrollController();
@@ -34,6 +33,7 @@ class MyStrategyPageState extends State<MyStrategyPage>
   int pageSize = 10;
   bool isShowMore = true;
   bool loading = false;
+  var bus = new EventBus();
 
   @override
   void initState() {
@@ -51,6 +51,15 @@ class MyStrategyPageState extends State<MyStrategyPage>
         loadData(LOADMORE_REQIEST);
       }
     });
+
+    // 监听登录事件
+    bus.on("login", (arg){
+       loadData(REFRESH_REQIEST);
+    });
+
+    bus.on("logout", (arg){
+       loadData(REFRESH_REQIEST);
+    });
   }
 
   @override
@@ -61,7 +70,6 @@ class MyStrategyPageState extends State<MyStrategyPage>
 
   loadData(int reqType) {
     User user = GetLocalUser();
-    print(" ===== GetStrategyList $user");
     if (user == null) {
       setState(() {
         strategyList = [];
@@ -136,7 +144,6 @@ class MyStrategyPageState extends State<MyStrategyPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);//必须添加
     return Scaffold(
       appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
@@ -433,9 +440,6 @@ class MyStrategyPageState extends State<MyStrategyPage>
                   "closeType": 1,
                 };
                 QueryShellStrategy(query).then((res) {
-                  setState(() {
-                    loading = false;
-                  });
                   if (res.code == 1000) {
                     ShowToast("卖出成功");
                     loadData(REFRESH_REQIEST);
@@ -443,8 +447,11 @@ class MyStrategyPageState extends State<MyStrategyPage>
                   } else {
                     ShowToast(res.msg);
                   }
+                  setState(() {
+                    loading = false;
+                  });
                 }).catchError((err) {
-                  print(err);
+                  ShowToast("网络出错，请联系管理员");
                   setState(() {
                     loading = false;
                   });

@@ -42,6 +42,7 @@ class Http {
       return options;
     }, onResponse: (Response response) {
       // 在返回响应数据之前做一些预处理
+  
       print("InterceptorsWrapper ===== $response.data ");
       return response; // continue
     }, onError: (DioError e) {
@@ -64,7 +65,12 @@ class Http {
         print('get请求发生错误：$e');
       }
     }
-    return response.data;
+    if (response != null){
+      return response.data == null ? response : response.data;
+    }
+     if (response.statusCode != 200) {
+          response.data = {"code": 200, "data":[], "msg": "网络出错"}; 
+      }
   }
 
   // post请求封装

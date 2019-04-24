@@ -8,3 +8,10 @@ Future<Response> GetSettings() async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> GetSettingsBanks() async {
+  var url = "/setting/bank/list";
+  var response = await Http().get(url);
+  var res = Response.fromJson(response);
+  return res;
+}

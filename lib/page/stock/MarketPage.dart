@@ -3,6 +3,7 @@ import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/ListEnity.dart';
 import 'package:fotune_app/model/User.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/page/stock/StockDetailsPage.dart';
 import 'package:fotune_app/page/stock/StockSearchPage.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
@@ -20,11 +21,7 @@ class MarketPage extends StatefulWidget {
   State<StatefulWidget> createState() => new MarketPageState();
 }
 
-class MarketPageState extends State<MarketPage>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
+class MarketPageState extends State<MarketPage> {
   List<Stock> stocks;
   List<StockIndex> stockIndexs = [];
   User user;
@@ -32,36 +29,39 @@ class MarketPageState extends State<MarketPage>
   String cancelTitle = "取消";
   bool isCancel = false;
   bool loading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context); //必须添加
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: new Center(child: getBody()),
-    );
-  }
+  var bus = new EventBus();
 
   @override
   void initState() {
     super.initState();
-    getDataIndex(1);
+
+    // 监听登录事件
+    bus.on("login", (arg) {
+      print("MarketPageState login listening");
+      loadData();
+    });
+
+    // 退出登录事件
+    bus.on("logout", (arg) {
+      print("MarketPageState login listening");
+      loadData();
+    });
+
     loadData();
   }
 
   loadData() {
+    User user = GetLocalUser();
     setState(() {
-      user = GetLocalUser();
+      user = user;
     });
     if (user != null) {
       GetOptionalList(user.user_id).then((res) {
         if (res.code == 1000) {
-          print(res.data);
           if (res.data != "") {
             getStocks(1, res.data.toString());
           }
         } else {
-          print("======================");
           setState(() {
             stocks = [];
           });
@@ -72,6 +72,16 @@ class MarketPageState extends State<MarketPage>
         stocks = [];
       });
     }
+
+    getDataIndex(1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: buildAppBar(),
+      body: new Center(child: getBody()),
+    );
   }
 
   Widget buildEmptyView() {
@@ -179,11 +189,11 @@ class MarketPageState extends State<MarketPage>
       });
     }).catchError((e) {
       print(e);
-//      ShowToast("网络出错");
     });
   }
 
   void getDataIndex(int requestType) {
+    stockIndexs.clear();
     String url = "http://hq.sinajs.cn/list=s_sz399001,s_sz399006,s_sh000001";
     fetch(url).then((data) {
       setState(() {
@@ -198,7 +208,7 @@ class MarketPageState extends State<MarketPage>
         });
       });
     }).catchError((e) {
-//      ShowToast("网络出错");
+      print(e);
     });
   }
 
@@ -273,7 +283,7 @@ class MarketPageState extends State<MarketPage>
     return null;
   }
 
-  TopWidget() {
+  Widget TopWidget() {
     return new Container(
       height: 138.0,
       child: new Padding(
@@ -292,7 +302,7 @@ class MarketPageState extends State<MarketPage>
                     ),
                     alignment: FractionalOffset.center,
                   ),
-                  flex: 8,
+                  flex: 1,
                 ),
                 new Expanded(
                   child: new Container(
@@ -303,11 +313,11 @@ class MarketPageState extends State<MarketPage>
                     ),
                     alignment: FractionalOffset.center,
                   ),
-                  flex: 13,
+                  flex: 1,
                 ),
                 new Expanded(
                   child: new Container(
-                    padding: new EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
+                    // padding: new EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
                     child: new Text(
                       "涨跌幅",
                       style: new TextStyle(
@@ -315,7 +325,7 @@ class MarketPageState extends State<MarketPage>
                     ),
                     alignment: FractionalOffset.center,
                   ),
-                  flex: 9,
+                  flex: 1,
                 ),
               ],
             ),
@@ -415,14 +425,20 @@ class MarketPageState extends State<MarketPage>
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
-              child: new Text("取消", style: TextStyle(color: Colors.white),),
+              child: new Text(
+                "取消",
+                style: TextStyle(color: Colors.white),
+              ),
               color: UIData.normal_font_color,
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             new FlatButton(
-              child: new Text("确认", style: TextStyle(color: Colors.white),),
+              child: new Text(
+                "确认",
+                style: TextStyle(color: Colors.white),
+              ),
               color: UIData.primary_color,
               onPressed: () {
                 if (loading) return;
@@ -444,11 +460,13 @@ class MarketPageState extends State<MarketPage>
                   } else {
                     ShowToast(res.msg);
                   }
-                }).catchError((err){ setState(() {
+                }).catchError((err) {
                   setState(() {
-                    loading = false;
+                    setState(() {
+                      loading = false;
+                    });
                   });
-                });});
+                });
               },
             ),
           ],

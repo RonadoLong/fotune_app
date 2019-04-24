@@ -18,7 +18,7 @@ class FundDetailsParentsPage extends StatelessWidget {
               indicatorColor: Colors.white,
               tabs: [
                 Tab(text: "全部"),
-                Tab(text: "收人"),
+                Tab(text: "收入"),
                 Tab(text: "支出"),
               ],
             ),

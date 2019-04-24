@@ -101,3 +101,10 @@ Future<Response> PostTiXian(params) async {
   var res = Response.fromJson(response);
   return res;
 }
+
+Future<Response> GetBanks() async {
+  var url = "/bank/banks";
+  var response = await Http().get(url);
+  var res = Response.fromJson(response);
+  return res;
+}

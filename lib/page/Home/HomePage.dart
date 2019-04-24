@@ -9,7 +9,6 @@ import 'package:fotune_app/page/Home/model/NiuPeople.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 import 'package:fotune_app/utils/Compute.dart';
-import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:http/http.dart' as http;

@@ -29,7 +29,7 @@ class MinePageState extends State<MinePage> {
     Icons.data_usage,
   ];
   var userAvatar = "https://image.showm.xin/wb/user/default-user-img5.png";
-  UserInfo user = new UserInfo();
+  UserInfo userInfo;
 
   var rightArrowIcon = new Image.asset(
     'images/ic_arrow_right.png',
@@ -54,14 +54,14 @@ class MinePageState extends State<MinePage> {
   }
 
   void loadUserInfo() {
-    User userinfo = GetLocalUser();
-    if (userinfo == null) {
+    User user = GetLocalUser();
+    if (user == null) {
       return;
     }
-    GetUserInfo(userinfo.user_id).then((res) {
+    GetUserInfo(user.user_id).then((res) {
       if (res.code == 1000) {
         setState(() {
-          user = res.data;
+          userInfo = res.data;
         });
       } else {
         ShowToast("加载数据失败，请重试");
@@ -85,8 +85,8 @@ class MinePageState extends State<MinePage> {
 
   @override
   Widget build(BuildContext context) {
-    var name = user != null ? user.userName : null;
-    var amount = user != null ? user.amount : null;
+    var name = userInfo != null ? userInfo.userName : null;
+    var amount = userInfo != null ? userInfo.amount : null;
     var listView = RefreshIndicator(
       onRefresh: (() => _handleRefresh()),
       color: UIData.refresh_color, //刷新控件的颜色
@@ -100,7 +100,7 @@ class MinePageState extends State<MinePage> {
         },
         itemCount: titles.length,
         itemBuilder: (context, i) => renderRow(i, userAvatar, name, amount,
-            user, titles, icons, context, _handleRefresh),
+            userInfo, titles, icons, context, _handleRefresh),
       ),
     );
 
@@ -118,14 +118,14 @@ class MinePageState extends State<MinePage> {
           IconButton(
               icon: Icon(Icons.settings),
               onPressed: () {
-                if (user != null) {
+                if (userInfo != null) {
                   Navigator.push(
                           context,
                           new MaterialPageRoute(
                               builder: (context) => new SettingPage()))
                       .then((result) {
                     if (result != null) {
-                      user = null;
+                      userInfo = null;
                     }
                   });
                 } else {

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/FInputWidget.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/utils/MD5Utils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
@@ -24,6 +27,7 @@ class SettingPageState extends State<SettingPage> {
   var _orderPWDController = new TextEditingController();
   var _newPWDController = new TextEditingController();
   var _againNewController = new TextEditingController();
+  var bus = new EventBus();
 
   String level = "中";
   double levelVal = 0.5;
@@ -204,6 +208,10 @@ class SettingPageState extends State<SettingPage> {
                   SpUtil.clear().then((res) {
                     if (res) {
                       ShowToast("退出成功");
+                    
+                      scheduleMicrotask((){
+                        bus.emit("logout");
+                      });
                       Navigator.of(context).pop();
                       pop();
                     }

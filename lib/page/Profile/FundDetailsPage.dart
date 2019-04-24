@@ -101,8 +101,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
         : Colors.red;
 
     DateTime dateTime = DateTime.parse(fd.createdAt);
-    String dateStr =
-        formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
+    String dateStr = formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
 
     return Container(
       color: Colors.white,

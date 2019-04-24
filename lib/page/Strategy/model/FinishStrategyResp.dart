@@ -50,6 +50,7 @@ class CloseStrategys {
   String stockCode;
   String stockName;
   var profit;
+  var localPrice;
   DetailBean detail;
   bool isShow = true;
 
@@ -59,7 +60,8 @@ class CloseStrategys {
       this.stockCode,
       this.stockName,
       this.profit,
-      this.detail});
+      this.detail,
+      this.localPrice});
 
   CloseStrategys.fromJson(Map<String, dynamic> json) {
     this.id = json['id'];
@@ -67,6 +69,7 @@ class CloseStrategys {
     this.stockCode = json['stockCode'];
     this.stockName = json['stockName'];
     this.profit = json['profit'];
+    this.localPrice = json['localPrice'];
     this.detail =
         json['detail'] != null ? DetailBean.fromJson(json['detail']) : null;
   }
@@ -98,6 +101,7 @@ class DetailBean {
   var closingFee;
   String buyType;
   var deferredFee;
+  var localPrice;
 
   DetailBean(
       {this.ord,
@@ -111,7 +115,8 @@ class DetailBean {
       this.buildingFee,
       this.closingFee,
       this.buyType,
-      this.deferredFee});
+      this.deferredFee,
+      this.localPrice});
 
   DetailBean.fromJson(Map<String, dynamic> json) {
     this.ord = json['ord'];
@@ -126,6 +131,7 @@ class DetailBean {
     this.closingFee = json['closingFee'];
     this.buyType = json['buyType'];
     this.deferredFee = json['deferredFee'];
+    this.localPrice = json['localPrice'];
   }
 
   Map<String, dynamic> toJson() {

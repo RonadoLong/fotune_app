@@ -30,7 +30,7 @@ dependencies:
   fluttertoast: ^3.0.0
   flutter_refresh: ^0.0.2
   gbk2utf8: ^0.0.1
-  flutter_html: ^0.8.2
+  flutter_html: ^0.9.6
   cached_network_image: ^0.5.0
   json_serializable: ^1.5.1
   flutter_spinkit: ^3.1.0

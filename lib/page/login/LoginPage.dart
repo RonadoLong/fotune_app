@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/FInputWidget.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/page/login/ForgetPWDPage.dart';
 import 'package:fotune_app/utils/MD5Utils.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
@@ -24,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   var _userPassController = new TextEditingController();
   var _userNameController = new TextEditingController();
+  var bus = new EventBus();
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +119,9 @@ class _LoginPageState extends State<LoginPage> {
                                       .then((val) {
                                     if (val) {
                                       ShowToast("登录成功");
+                                      scheduleMicrotask((){
+                                        bus.emit("login","");
+                                      });
                                       Navigator.of(context).pop("登录成功");
                                     }
                                   });

@@ -4,9 +4,7 @@ import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/Profile/BankManagePage.dart';
 import 'package:fotune_app/page/Profile/model/BankResp.dart';
-import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
-import 'dart:isolate';
 
 class BankPage extends StatefulWidget {
   UserInfo userInfo;
