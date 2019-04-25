@@ -110,7 +110,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
     );
   }
 
-  void getDataIndex(int request_type) {
+  void getDataIndex(int requestType) {
     String url = "http://hq.sinajs.cn/list=s_sz399001,s_sz399006,s_sh000001";
     fetch(url).then((data) {
       setState(() {

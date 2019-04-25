@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fotune_app/utils/UIData.dart';
@@ -12,7 +14,7 @@ Widget BuildLoadMoreView() {
     ),
   ]);
   return new Padding(
-    padding: const EdgeInsets.all(20.0),
+    padding: const EdgeInsets.all(5.0),
     child: new Center(
       child: bottomWidget,
     ),
@@ -46,3 +48,17 @@ Widget buildEmptyView() {
     ),
   );
 }
+
+
+  Future<void> handleRefresh(Function todo) {
+    final Completer<void> completer = Completer<void>();
+    // Timer(const Duration(seconds: 1), () {
+    //   completer.complete();
+    // });
+    Future.delayed(Duration(seconds: 1), (){
+        completer.complete();
+    });
+    return completer.future.then<void>((_) {
+      todo();
+    });
+  }

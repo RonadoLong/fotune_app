@@ -23,11 +23,16 @@ class MyStrategyPage extends StatefulWidget {
   }
 }
 
-class MyStrategyPageState extends State<MyStrategyPage>{
+class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveClientMixin{
 
+  @override
+  bool get wantKeepAlive => true;
 
   List<Strategy> strategyList;
+
+  @protected
   final ScrollController _scrollController = new ScrollController();
+
   User user;
   int pageNum = 0;
   int pageSize = 10;
@@ -38,9 +43,9 @@ class MyStrategyPageState extends State<MyStrategyPage>{
   @override
   void initState() {
     super.initState();
-    setState(() {
-      loadData(START_REQUEST);
-    });
+
+    loadData(START_REQUEST);
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         if (strategyList.length >= pageSize) {
@@ -77,9 +82,6 @@ class MyStrategyPageState extends State<MyStrategyPage>{
     } else {
       var currenPage = reqType == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetStrategyList(user.user_id, currenPage, pageSize).then((res) {
-        setState(() {
-            isShowMore = true;
-        });
         if (res.code == 1000) {
           setState(() {
             if (reqType == LOADMORE_REQIEST) {
@@ -94,6 +96,13 @@ class MyStrategyPageState extends State<MyStrategyPage>{
             strategyList = strategyList == null ? [] : strategyList;
           });
         }
+
+        handleRefresh((){
+          setState(() {
+            isShowMore = true;
+          });
+        });
+        
       }).catchError((err){
         print(err);
         setState(() {
@@ -111,7 +120,7 @@ class MyStrategyPageState extends State<MyStrategyPage>{
       );
     }  else {
       return new RefreshIndicator(
-          onRefresh: (() => _handleRefresh()),
+          onRefresh: (() => handleRefresh(loadData(REFRESH_REQIEST))),
           color: UIData.refresh_color, //刷新控件的颜色
           child: ListView.separated(
             itemCount: strategyList.length + 1,
@@ -144,6 +153,7 @@ class MyStrategyPageState extends State<MyStrategyPage>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
@@ -371,15 +381,15 @@ class MyStrategyPageState extends State<MyStrategyPage>{
     );
   }
 
-  Future<void> _handleRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 1), () {
-      completer.complete();
-    });
-    return completer.future.then<void>((_) {
-      loadData(REFRESH_REQIEST);
-    });
-  }
+  // Future<void> _handleRefresh() {
+  //   final Completer<void> completer = Completer<void>();
+  //   Timer(const Duration(seconds: 1), () {
+  //     completer.complete();
+  //   });
+  //   return completer.future.then<void>((_) {
+  //     loadData(REFRESH_REQIEST);
+  //   });
+  // }
 
   // ignore: non_constant_identifier_names
   void ShellStrategy(Strategy strategy) {

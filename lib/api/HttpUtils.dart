@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
-const PROHOST = "http://47.75.33.6";
+const PROHOST = "http://app.caifutong.live";
 const DEVHOST = "http://127.0.0.1:9527";
-String host = inProduction ? PROHOST : DEVHOST;
+String host = inProduction ? PROHOST : PROHOST;
 
 class Http {
   static Http instance;

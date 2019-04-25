@@ -43,8 +43,11 @@ class MarketPageState extends State<MarketPage> {
 
     // 退出登录事件
     bus.on("logout", (arg) {
-      print("MarketPageState login listening");
-      loadData();
+      print("MarketPageState logout listening");
+      setState(() {
+        user = null;
+        stocks = [];
+      });
     });
 
     loadData();
@@ -53,7 +56,7 @@ class MarketPageState extends State<MarketPage> {
   loadData() {
     User user = GetLocalUser();
     setState(() {
-      user = user;
+      this.user = user;
     });
     if (user != null) {
       GetOptionalList(user.user_id).then((res) {
@@ -148,7 +151,7 @@ class MarketPageState extends State<MarketPage> {
             IconButton(
               icon: Icon(Icons.add_to_photos),
               onPressed: () {
-                if (user == null) {
+                if (this.user == null) {
                   GotoLoginPage(context).then((res) {
                     loadData();
                   });

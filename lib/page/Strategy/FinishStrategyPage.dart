@@ -25,35 +25,38 @@ class FinishStrategyPage extends StatefulWidget {
   }
 }
 
-class FinishStrategyPageState extends State<FinishStrategyPage>{
+class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKeepAliveClientMixin{
 
-  final ScrollController _scrollController = new ScrollController();
+  @protected
+  final ScrollController scrollController = new ScrollController();
+
   User user;
   List<CloseStrategys> dataList;
   int pageNum = 1;
   int pageSize = 10;
-  bool isShowMore = false;
+  // 默认不显示加载更多
+  bool isShowMore = true; 
   var bus = new EventBus();
 
   @override
   void initState() {
     super.initState();
 
-    loadData(START_REQUEST);
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        if (dataList.length >= 10) {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        if (dataList.length >= pageSize) {
+          print("load more data ========== ${(dataList.length >= pageSize)}");
           setState(() {
-            isShowMore = true;
+            isShowMore = false;
           });
+          loadData(LOADMORE_REQIEST);
         }
-        loadData(LOADMORE_REQIEST);
       }
     });
 
-       // 监听登录事件
+    loadData(START_REQUEST);
+
+    // 监听登录事件
     bus.on("login", (arg){
        loadData(REFRESH_REQIEST);
     });
@@ -66,7 +69,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
   @override
   void dispose() {
     super.dispose();
-    _scrollController.dispose();
+    scrollController.dispose();
   }
 
   loadData(int type) {
@@ -77,14 +80,9 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
     if (user != null) {
       var currentPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetCloseList(user.user_id, pageNum, pageSize).then((res) {
-        setState(() {
-          isShowMore = false;
-        });
-
         if (res.code == 1000) {
           setState(() {
             if (type == LOADMORE_REQIEST) {
-              isShowMore = false;
               dataList.addAll(res.data.strategys);
             } else {
               dataList = res.data.strategys;
@@ -92,13 +90,22 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
             pageNum = currentPage;
           });
         } else if (res.code == 1004) {
+        
           if (type == LOADMORE_REQIEST) {
+          
           } else {
             setState(() {
               dataList = dataList == null ? [] : dataList;
             });
           }
         }
+
+        handleRefresh((){
+          setState(() {
+            isShowMore = true;
+          });
+        });
+       
       }).catchError((err) {
         print(err);
         setState(() {
@@ -116,6 +123,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
@@ -131,16 +139,17 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
       );
     } else {
       return new RefreshIndicator(
-        onRefresh: (() => _handleRefresh()),
+        onRefresh: (() => handleRefresh(loadData(REFRESH_REQIEST))),
         color: UIData.refresh_color, //刷新控件的颜色
         child: ListView.separated(
+          controller: scrollController,
           itemCount: dataList.length + 1,
           itemBuilder: (context, index) {
             if (dataList.length == 0) {
               return buildEmptyView();
             }
-            CloseStrategys cs = dataList[index];
             if (index < dataList.length) {
+              CloseStrategys cs = dataList[index];
               return buildBodyCell(cs, index);
             } else {
               return Offstage(offstage: isShowMore, child: BuildLoadMoreView());
@@ -156,16 +165,6 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
         ),
       );
     }
-  }
-
-  Future<void> _handleRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 1), () {
-      completer.complete();
-    });
-    return completer.future.then<void>((_) {
-      loadData(REFRESH_REQIEST);
-    });
   }
 
   Widget buildBodyCell(CloseStrategys cs, int index) {
@@ -313,4 +312,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage>{
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -2,25 +2,19 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fotune_app/api/HttpUtils.dart';
-import 'package:fotune_app/api/Setting.dart';
-import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/ListEnity.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/stock/AddStrategyPage.dart';
-import 'package:fotune_app/page/stock/DiscoverWidget.dart';
-import 'package:fotune_app/page/stock/HtmlWidget.dart';
+
 import 'package:fotune_app/page/stock/SelectedWidget.dart';
-import 'package:fotune_app/page/stock/StockSearchPage.dart';
 import 'package:fotune_app/page/stock/model/Setting.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 
 import 'package:fotune_app/utils/Compute.dart';
-import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
