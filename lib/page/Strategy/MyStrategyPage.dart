@@ -102,7 +102,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
             isShowMore = true;
           });
         });
-        
+
       }).catchError((err){
         print(err);
         setState(() {
@@ -415,7 +415,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text("交易品种: " + strategy.stockName + "(" + strategy.stockCode + ")"),
-          Text("卖出数量: " + strategy.count.toString() + "手"),
+          Text("卖出数量: " + strategy.count.toString() + "股"),
           Text("买入时间: " + dateStr ),
           Text("浮动盈亏: " + strategy.profit.toString()+ " (仅供参考)"),
         ],

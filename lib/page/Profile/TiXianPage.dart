@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/UserInfo.dart';
+import 'package:fotune_app/page/Profile/model/BankResp.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
@@ -20,6 +21,24 @@ class TiXianPage extends StatefulWidget {
 class TiXianPageState extends State<TiXianPage> {
   int price;
   final priceController = new TextEditingController();
+  Banks banks;
+
+  @override
+  void initState() {
+    super.initState();
+      GetBankList(widget.userinfo.id).then((res) {
+      if (res.code == 1000) {
+        BankResp bankResp = BankResp.fromJson(res.data);
+        setState(() {
+          banks = bankResp.banks[0];
+        });
+      } else if (res.code == 1004) {
+        
+      }
+    }).catchError((err) {
+//      ShowToast("网络出错");
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +54,6 @@ class TiXianPageState extends State<TiXianPage> {
 
     return Container(
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
@@ -63,7 +81,7 @@ class TiXianPageState extends State<TiXianPage> {
                       Padding(
                         padding: EdgeInsets.only(left: 30),
                       ),
-                      Text(widget.userinfo.idCard),
+                      Text(banks.cardNumber),
                     ],
                   ),
                 )
@@ -120,8 +138,7 @@ class TiXianPageState extends State<TiXianPage> {
                   "提现无任何形式手续费",
                   style: TextStyle(color: UIData.grey_color),
                 ),
-                Text("上午时段的提款将在12点左右到账"),
-                Text("下午时段的提款将在16点左右到账")
+                Text("具体到账时间以银行到账时间为准"),
               ],
             ),
           )

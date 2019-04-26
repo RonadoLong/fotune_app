@@ -27,7 +27,7 @@ Widget newButtonSection(Function callBack) {
           onTap: (){
             callBack(11);
           },
-          child: CustomBtnColumn(Icons.account_balance_wallet, '即可充值', null),
+          child: CustomBtnColumn(Icons.account_balance_wallet, '立即充值', null),
         ),
         GestureDetector(
           onTap: (){
