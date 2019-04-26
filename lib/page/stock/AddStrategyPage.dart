@@ -46,8 +46,6 @@ class AddStrategyPageState extends State<AddStrategyPage> {
   int amount = 0;
   int stockCount = 0;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -176,7 +174,7 @@ class AddStrategyPageState extends State<AddStrategyPage> {
 
   Future showProtocol(int index) async {
     var responseBody;
-    var url="$host/api/client/protocol/$index";
+    var url = "$host/api/client/protocol/$index";
     var httpClient = new HttpClient();
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
@@ -186,63 +184,75 @@ class AddStrategyPageState extends State<AddStrategyPage> {
       Navigator.push(
           context,
           new MaterialPageRoute(
-              builder: (context) =>
-              new NewsDetailsPage("", responseBody)));
-    }else{
+              builder: (context) => new NewsDetailsPage("", responseBody)));
+    } else {
       print("error");
     }
-
   }
 
   Widget buildBottom() {
-    return Container(
-      margin: EdgeInsets.only(top: 18),
-      child: RaisedButton(
-        onPressed: () {
-          if (userInfo.amount == 0) {
-            ShowToast("您的账户余额不足请前往充值");
-            return;
-          }
-          if (loading) {
-            return;
-          }
-          setState(() {
-            loading = true;
-          });
-          var addStrategyReq = {
-            "uid": userInfo.id,
-            "stockCode": stock.stock_code,
-            "stockName": stock.name,
-            "multiple": currentSelectedBeiShu,
-            "stockCount": stockCount,
-          };
-          AddStrategy(addStrategyReq).then((res) {
-            setState(() {
-              loading = false;
-            });
-            if (res.code == 1000) {
-              ShowToast("添加成功");
-            } else {
-              ShowToast(res.msg);
-            }
-            Navigator.of(context).pop();
-          }).catchError((res) {
-            setState(() {
-              loading = false;
-            });
-            ShowToast("网络出错，请重试");
-          });
-        },
-        color: UIData.primary_color,
-        child: Container(
-          width: MediaQuery.of(context).size.width - 100,
-          child: Text(
-            "提 交",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 15),
-          ),
-        ),
-      ),
-    );
+    return loading == false
+        ? Container(
+            margin: EdgeInsets.only(top: 18),
+            child: RaisedButton(
+              onPressed: () {
+                if (userInfo.amount == 0) {
+                  ShowToast("您的账户余额不足请前往充值");
+                  return;
+                }
+                if (loading) {
+                  return;
+                }
+                setState(() {
+                  loading = true;
+                });
+                var addStrategyReq = {
+                  "uid": userInfo.id,
+                  "stockCode": stock.stock_code,
+                  "stockName": stock.name,
+                  "multiple": currentSelectedBeiShu,
+                  "stockCount": stockCount,
+                };
+                AddStrategy(addStrategyReq).then((res) {
+                  setState(() {
+                    loading = false;
+                  });
+                  if (res.code == 1000) {
+                    ShowToast("添加成功");
+                  } else {
+                    ShowToast(res.msg);
+                  }
+                  Navigator.of(context).pop();
+                }).catchError((res) {
+                  setState(() {
+                    loading = false;
+                  });
+                  ShowToast("网络出错，请重试");
+                });
+              },
+              color: UIData.primary_color,
+              child: Container(
+                width: MediaQuery.of(context).size.width - 100,
+                child: Text(
+                  "提 交",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                ),
+              ),
+            ),
+          )
+        : Container(
+            margin: EdgeInsets.only(top: 18),
+            width: 60.0,
+            height: 60.0,
+            alignment: FractionalOffset.center,
+            decoration: new BoxDecoration(
+                color: UIData.primary_color,
+                borderRadius:
+                    new BorderRadius.all(const Radius.circular(30.0))),
+            child: new CircularProgressIndicator(
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          );
   }
 }

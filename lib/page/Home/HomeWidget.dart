@@ -18,25 +18,25 @@ Widget newButtonSection(Function callBack) {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         GestureDetector(
-          onTap: (){
+          onTap: () {
             callBack(1);
           },
           child: CustomBtnColumn(Icons.create_new_folder, '发布策略', null),
         ),
         GestureDetector(
-          onTap: (){
+          onTap: () {
             callBack(11);
           },
           child: CustomBtnColumn(Icons.account_balance_wallet, '立即充值', null),
         ),
         GestureDetector(
-          onTap: (){
+          onTap: () {
             callBack(2);
           },
           child: CustomBtnColumn(Icons.notifications_active, '股票策略', null),
         ),
         GestureDetector(
-          onTap: (){
+          onTap: () {
             callBack(12);
           },
           child: CustomBtnColumn(Icons.message, '新手指引', null),
@@ -87,14 +87,14 @@ Widget newQuoteView(List<StockIndex> markets) {
           ),
           new Column(
               children: markets.map((stockIndex) {
-            String gains_rate = stockIndex.gains_rate;
-            String change_prefix = "";
+            String gainsRate = stockIndex.gains_rate;
+            String changePrefix = "";
 
             return new CustomQuoteCell(
               Icons.account_circle,
               stockIndex.name,
               stockIndex.current_points,
-              change_prefix + gains_rate + "%",
+              changePrefix + gainsRate + "%",
             );
           }).toList()),
         ],
