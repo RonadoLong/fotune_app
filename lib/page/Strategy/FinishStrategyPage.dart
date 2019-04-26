@@ -171,10 +171,10 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
     Color color = cs.detail.tranProfit.indexOf("-") != -1 ? Colors.green : Colors.red;
 
     DateTime buyTime = DateTime.parse(cs.detail.buyTime);
-    String buyTimeStr = formatDate(buyTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    String buyTimeStr = formatDate(buyTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     DateTime sellTime = DateTime.parse(cs.detail.sellTime);
-    String sellTimeStr = formatDate(sellTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    String sellTimeStr = formatDate(sellTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     return Container(
         color: Colors.white,

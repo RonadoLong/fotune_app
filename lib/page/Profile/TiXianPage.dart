@@ -8,8 +8,11 @@ import 'package:fotune_app/utils/UIData.dart';
 
 class TiXianPage extends StatefulWidget {
   UserInfo userinfo;
-  TiXianPage(UserInfo userInfo) {
+  String cardNumber = "";
+
+  TiXianPage(UserInfo userInfo, String cardNumber) {
     this.userinfo = userInfo;
+    this.cardNumber = cardNumber;
   }
 
   @override
@@ -21,29 +24,17 @@ class TiXianPage extends StatefulWidget {
 class TiXianPageState extends State<TiXianPage> {
   int price;
   final priceController = new TextEditingController();
-  Banks banks;
 
   @override
   void initState() {
     super.initState();
-      GetBankList(widget.userinfo.id).then((res) {
-      if (res.code == 1000) {
-        BankResp bankResp = BankResp.fromJson(res.data);
-        setState(() {
-          banks = bankResp.banks[0];
-        });
-      } else if (res.code == 1004) {
-        
-      }
-    }).catchError((err) {
-//      ShowToast("网络出错");
-    });
+  
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidget.BuildAppBar("提现", context),
-      body: widget.userinfo.idCard == ""
+      body: widget.cardNumber == ""
           ? Center(child: buildEmptyView())
           : buildBody(),
     );
@@ -81,7 +72,7 @@ class TiXianPageState extends State<TiXianPage> {
                       Padding(
                         padding: EdgeInsets.only(left: 30),
                       ),
-                      Text(banks.cardNumber),
+                      Text(widget.cardNumber),
                     ],
                   ),
                 )

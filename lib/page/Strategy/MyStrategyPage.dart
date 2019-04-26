@@ -168,8 +168,9 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     var stockCount = strategy.count;
 
     DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
+
     String dateStr =
-    formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    formatDate(dateTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     return Container(
       color: Colors.white,
@@ -406,7 +407,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
 
     DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
     String dateStr =
-    formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    formatDate(dateTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     var content = Container(
       height: 200,

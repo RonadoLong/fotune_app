@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/componets/cell.dart';
 import 'package:fotune_app/model/UserInfo.dart';
@@ -6,11 +7,13 @@ import 'package:fotune_app/page/Profile/BankPages.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
 import 'package:fotune_app/page/Profile/FundDetailsParentsPage.dart';
 import 'package:fotune_app/page/Profile/TiXianPage.dart';
+import 'package:fotune_app/page/Profile/model/BankResp.dart';
 import 'package:fotune_app/page/Strategy/FinishStrategyPage.dart';
 import 'package:fotune_app/page/Strategy/MyStrategyPage.dart';
 import 'package:fotune_app/page/Strategy/StrategyPage.dart';
 import 'package:fotune_app/utils/ComstomBtnColumn.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
+import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
 renderRow(
@@ -67,12 +70,28 @@ renderRow(
                           Icons.account_balance_wallet, '提现', Colors.white),
                       onTap: () {
                         print("======");
-                        Navigator.push(
+                        GetBankList(user.id).then((res) {
+                          if (res.code == 1000) {
+                            BankResp bankResp = BankResp.fromJson(res.data);
+
+                            Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) => new TiXianPage(
+                                            user,
+                                            bankResp.banks[0].cardNumber)))
+                                .then((res) {
+                              handleRefresh();
+                            });
+                          } else if (res.code == 1004) {
+                            ShowToast("请您先绑定银行卡");
+                            Navigator.push(
                                 context,
                                 new MaterialPageRoute(
-                                    builder: (context) => new TiXianPage(user)))
-                            .then((res) {
-                          handleRefresh();
+                                    builder: (context) => new BankPage(user)));
+                          }
+                        }).catchError((err) {
+                          //      ShowToast("网络出错");
                         });
                       },
                     )),
