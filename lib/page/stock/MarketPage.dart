@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
@@ -53,7 +54,7 @@ class MarketPageState extends State<MarketPage> {
     loadData();
   }
 
-  loadData() {
+  void loadData() {
     User user = GetLocalUser();
     setState(() {
       this.user = user;
@@ -159,7 +160,7 @@ class MarketPageState extends State<MarketPage> {
                   Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => StockSearchPage()))
+                              builder: (context) => StockSearchPage(false)))
                       .then((call) {
                     loadData();
                   });
@@ -186,8 +187,7 @@ class MarketPageState extends State<MarketPage> {
         List<String> stockStrs = data.split(";");
         for (int i = 0; i < (stockStrs.length - 1); i++) {
           String str = stockStrs[i];
-          Stock stock = new Stock();
-          stocks.add(DealStocks(str, stock));
+          stocks.add(DealStocks(str));
         }
       });
     }).catchError((e) {
@@ -339,12 +339,15 @@ class MarketPageState extends State<MarketPage> {
   }
 
   getListViewItem(int position) {
-    Stock stock = stocks[position];
-    double yesterdayClose = double.parse(stock.yesterday_close);
-    double currentPrices = double.parse(stock.current_prices);
-    double todayOpen = double.parse(stock.today_open);
+    Stock positionStock = stocks[position];
+    print(positionStock);
+
+    double yesterdayClose = positionStock.yesterday_close;
+    double currentPrices = positionStock.current_prices;
+    double todayOpen = positionStock.today_open;
     double gains = ComputeGainsRate(yesterdayClose, currentPrices, todayOpen);
     stocks[position].gains = gains;
+
     String currentPricesStr = currentPrices.toStringAsFixed(2);
     return new GestureDetector(
       child: new Card(
@@ -361,7 +364,7 @@ class MarketPageState extends State<MarketPage> {
                     children: <Widget>[
                       new Container(
                         child: new Text(
-                          stock.name,
+                          positionStock.name,
                           style: new TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.w700),
                         ),
@@ -369,7 +372,7 @@ class MarketPageState extends State<MarketPage> {
                       ),
                       new Container(
                         child: new Text(
-                          stock.stock_code,
+                          positionStock.stock_code,
                           style: new TextStyle(
                               fontSize: 12.0, color: Colors.black38),
                         ),
@@ -402,7 +405,7 @@ class MarketPageState extends State<MarketPage> {
                 child: new IconButton(
                   icon: Icon(Icons.delete_forever),
                   onPressed: () {
-                    _showDialog(stock);
+                    _showDialog(positionStock);
                   },
                   color: Colors.red,
                 ),
@@ -412,7 +415,7 @@ class MarketPageState extends State<MarketPage> {
         ),
       ),
       onTap: () {
-        onItimeClick(stock);
+        onItemClick(positionStock);
       },
     );
   }
@@ -478,7 +481,8 @@ class MarketPageState extends State<MarketPage> {
     );
   }
 
-  void onItimeClick(Stock stock) {
+  void onItemClick(Stock stock) {
+    print(stock);
     Navigator.push(
         context,
         new MaterialPageRoute(
@@ -537,7 +541,7 @@ class MarketPageState extends State<MarketPage> {
             Container(
               margin: EdgeInsets.all(2),
               child: Text(
-                stockIndex.current_points,
+                stockIndex.current_points.toString(),
                 style: new TextStyle(fontSize: 17.0, color: showColor),
                 maxLines: 1,
                 textAlign: TextAlign.center,
@@ -550,7 +554,7 @@ class MarketPageState extends State<MarketPage> {
                 children: <Widget>[
                   Container(
                     child: Text(
-                      stockIndex.current_prices,
+                      stockIndex.current_prices.toString(),
                       style: new TextStyle(fontSize: 12.0, color: Colors.blue),
                       maxLines: 1,
                     ),

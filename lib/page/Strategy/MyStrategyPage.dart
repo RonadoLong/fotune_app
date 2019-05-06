@@ -38,6 +38,8 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
   int pageSize = 10;
   bool isShowMore = true;
   bool loading = false;
+
+  @protected
   var bus = new EventBus();
 
   @override
@@ -49,9 +51,11 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         if (strategyList.length >= pageSize) {
-          setState(() {
+          if(this.mounted) {
+             setState(() {
             isShowMore = false;
           });
+          }
         }
         loadData(LOADMORE_REQIEST);
       }
@@ -67,23 +71,20 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _scrollController.dispose();
-  }
-
   loadData(int reqType) {
     User user = GetLocalUser();
     if (user == null) {
-      setState(() {
-        strategyList = [];
-      });
+      if(this.mounted) {
+         setState(() {
+          strategyList = [];
+        });
+      }
     } else {
       var currenPage = reqType == REFRESH_REQIEST ? 1 : pageNum + 1;
       GetStrategyList(user.user_id, currenPage, pageSize).then((res) {
         if (res.code == 1000) {
-          setState(() {
+          if (this.mounted) {
+            setState(() {
             if (reqType == LOADMORE_REQIEST) {
               strategyList.addAll(res.data.myStrategy);
             } else {
@@ -91,10 +92,13 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
             }
             pageNum = currenPage;
           });
+          }
         } else if (res.code == 1004) {
-          setState(() {
+          if(this.mounted) {
+            setState(() {
             strategyList = strategyList == null ? [] : strategyList;
           });
+          }
         }
 
         handleRefresh((){
@@ -105,10 +109,12 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
 
       }).catchError((err){
         print(err);
-        setState(() {
+        if(this.mounted) {
+          setState(() {
           isShowMore = true;
           strategyList = [];
         });
+        }
       });
     }
   }
@@ -228,7 +234,6 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                   margin: EdgeInsets.only(top: 10),
                   child: GestureDetector(
                     onTap: () {
-                      print("=======================");
                       List<Strategy> ss = [];
                       strategyList.forEach((s) {
                         if (s.Detail.orderNo == strategy.Detail.orderNo) {
@@ -395,7 +400,6 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
   // ignore: non_constant_identifier_names
   void ShellStrategy(Strategy strategy) {
     DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
-    print(DateTime.now().day);
     if (DateTime.now().day == dateTime.day && DateTime.now().month == dateTime.month) {
       ShowToast("当天买入的股票下个工作日才能交易");
       return;
@@ -529,7 +533,6 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                     ShowToast("请输入您要追加的金额");
                     return;
                   }
-                  print(phoneController.text);
                   var req = {
                     "uid": user.user_id,
                     "strategyId": id,

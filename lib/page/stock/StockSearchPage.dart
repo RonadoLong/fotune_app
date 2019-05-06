@@ -7,6 +7,9 @@ import 'package:fotune_app/page/stock/model/SearchResp.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 
 class StockSearchPage extends StatefulWidget {
+  bool isCall;
+  StockSearchPage(this.isCall);
+
   @override
   State<StatefulWidget> createState() {
     return StockSearchPageState();
@@ -32,6 +35,11 @@ class StockSearchPageState extends State<StockSearchPage> {
                 SearchStock s = list[index - 1];
                 return GestureDetector(
                     onTap: () {
+                      if (widget.isCall) {
+                         var code = s.market + s.code;
+                          Navigator.of(context).pop(code);
+                          return;
+                      }
 
                       if (this.pushing) {
                         return;

@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/strategy.dart';
@@ -66,22 +65,20 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    scrollController.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   scrollController.dispose();
+  // }
 
   loadData(int type) {
     User user = GetLocalUser();
-      setState(() {
-        user = user;
-      });
     if (user != null) {
       var currentPage = type == REFRESH_REQIEST ? 1 : pageNum + 1;
-      GetCloseList(user.user_id, pageNum, pageSize).then((res) {
+      GetCloseList(user.user_id, currentPage, pageSize).then((res) {
         if (res.code == 1000) {
-          setState(() {
+          if (this.mounted) {
+            setState(() {
             if (type == LOADMORE_REQIEST) {
               dataList.addAll(res.data.strategys);
             } else {
@@ -89,14 +86,17 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
             }
             pageNum = currentPage;
           });
+          }
         } else if (res.code == 1004) {
         
           if (type == LOADMORE_REQIEST) {
           
           } else {
-            setState(() {
-              dataList = dataList == null ? [] : dataList;
-            });
+              if (this.mounted) {
+                setState(() {
+                  dataList = dataList == null ? [] : dataList;
+                });
+              }
           }
         }
 
@@ -108,17 +108,22 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
        
       }).catchError((err) {
         print(err);
-        setState(() {
+        if(this.mounted) {
+          setState(() {
           isShowMore = false;
           dataList = [];
         });
+        }
       });
     } else {
-      print("用户为登录");
-      setState(() {
-        dataList = [];
-      });
+      if (this.mounted) {
+        setState(() {
+          dataList = [];
+        });
+      }
     }
+
+
   }
 
   @override

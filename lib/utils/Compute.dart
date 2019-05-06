@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 
@@ -54,7 +55,8 @@ String ComputeGainsNum(
 /**
  * 处理股票数据
  */
-Stock DealStocks(String str, Stock stock) {
+Stock DealStocks(String str) {
+  Stock stock = new Stock();
   int start = str.indexOf("\"") + 1;
   int end = str.indexOf("\"", start);
   stock.stock_code2 = str.substring(str.indexOf("str_") + 4, start - 2);
@@ -62,15 +64,15 @@ Stock DealStocks(String str, Stock stock) {
   String stock_str = str.substring(start, end);
   List stock_item = stock_str.split(",");
   stock.name = stock_item[0];
-  stock.today_open = stock_item[1];
-  stock.yesterday_close = stock_item[2];
-  stock.current_prices = stock_item[3];
+  stock.today_open = double.parse(stock_item[1]);
+  stock.yesterday_close = double.parse(stock_item[2]);
+  stock.current_prices = double.parse(stock_item[3]);
   stock.today_highest_price = stock_item[4];
   stock.today_lowest_price = stock_item[5];
   stock.buy1_j = stock_item[6];
   stock.sell1_j = stock_item[7];
-  stock.traded_num = stock_item[8];
-  stock.traded_amount = stock_item[9];
+  stock.traded_num = double.parse(stock_item[8]);
+  stock.traded_amount = double.parse(stock_item[9]);
   stock.buy1_apply_num = stock_item[10];
   stock.buy1 = stock_item[11];
   stock.buy2_apply_num = stock_item[12];
@@ -93,6 +95,9 @@ Stock DealStocks(String str, Stock stock) {
   stock.sell5 = stock_item[29];
   stock.date = stock_item[30];
   stock.time = stock_item[31];
+
+  print("=========");
+  print(stock);
   return stock;
 }
 

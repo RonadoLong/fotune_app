@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fotune_app/page/Home/HomeNewsPage.dart';
 import 'package:fotune_app/page/Strategy/StrategyPage.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/page/home/HomePage.dart';
 import 'package:fotune_app/page/Profile/MinePage.dart';
 import 'package:fotune_app/page/stock/MarketPage.dart';
@@ -26,6 +27,7 @@ class MainPageState extends State<MainPageWidget> {
   int _tabIndex = 0;
   var tabImages;
   var appBarTitles = ['首页', '自选', '策略', '我的'];
+  var bus = new EventBus();
 
   /*
    * 存放三个页面，跟fragmentList一样
@@ -136,6 +138,7 @@ class MainPageState extends State<MainPageWidget> {
   }
 
   void changeTab(int index) {
+
     setState(() {
       _tabIndex = index;
     });
@@ -167,6 +170,8 @@ class MainPageState extends State<MainPageWidget> {
           iconSize: 24.0,
           //点击事件
           onTap: (index) {
+            var idx = index == 2 ? true : false;
+            bus.emit("changeTimeLineStatus", idx);
             setState(() {
               _tabIndex = index;
             });

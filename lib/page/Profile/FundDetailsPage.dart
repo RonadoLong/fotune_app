@@ -5,6 +5,7 @@ import 'package:fotune_app/api/account.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/Profile/model/FoundDetailResp.dart';
+import 'package:fotune_app/page/common/CommonWidget.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:loadmore/loadmore.dart';
 import 'package:date_format/date_format.dart';
@@ -16,8 +17,9 @@ class FundDetailsPage extends StatefulWidget {
 
   @override
   State createState() {
-    return FundDetailsPageState();
+    return new FundDetailsPageState();
   }
+
 }
 
 class FundDetailsPageState extends State<FundDetailsPage> {
@@ -25,6 +27,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
   List<FoundDetails> dataList;
   int pageNum = 1;
   int pageSize = 20;
+  bool isFinish = false;
 
   @override
   void initState() {
@@ -49,6 +52,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
         setState(() {
           dataList = res.data.details;
           pageNum = 1;
+          isFinish = res.data.details.length < 20;
         });
       }
     });
@@ -62,12 +66,19 @@ class FundDetailsPageState extends State<FundDetailsPage> {
           dataList.addAll(res.data.details);
         });
       }
+      if (res.code == 1004) {
+        handleRefresh(() {
+          setState(() {
+            isFinish = true;
+          });
+        });
+      }
     });
   }
 
   Future<bool> _loadMore() async {
-    print("onLoadMore");
-    await Future.delayed(Duration(seconds: 0, milliseconds: 100));
+    loadMore(user.user_id);
+    await Future.delayed(Duration(seconds: 1, milliseconds: 100));
     return true;
   }
 
@@ -81,7 +92,7 @@ class FundDetailsPageState extends State<FundDetailsPage> {
       return buildEmptyView();
     } else {
       return LoadMore(
-        isFinish: dataList.length < 20,
+        isFinish: isFinish,
         onLoadMore: _loadMore,
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -101,7 +112,8 @@ class FundDetailsPageState extends State<FundDetailsPage> {
         : Colors.red;
 
     DateTime dateTime = DateTime.parse(fd.createdAt);
-    String dateStr = formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
+    String dateStr =
+        formatDate(dateTime, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]);
 
     return Container(
       color: Colors.white,
@@ -147,16 +159,6 @@ class FundDetailsPageState extends State<FundDetailsPage> {
         ],
       ),
     );
-  }
-
-  Future<void> _handleRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 1), () {
-      completer.complete();
-    });
-    return completer.future.then<void>((_) {
-      loadData();
-    });
   }
 
   Widget buildEmptyView() {

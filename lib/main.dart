@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:fotune_app/MainPage.dart';
-import 'package:fotune_app/page/Home/HomePage.dart';
-import 'package:fotune_app/page/Home/QuoteStatusPage.dart';
 import 'package:fotune_app/page/notfound/notfound_page.dart';
 import 'package:fotune_app/utils/UIData.dart';
 

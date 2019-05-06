@@ -7,6 +7,7 @@ import 'package:fotune_app/page/Home/NewPeoplePage.dart';
 import 'package:fotune_app/page/Home/model/Carsousel.dart';
 import 'package:fotune_app/page/Home/model/NiuPeople.dart';
 import 'package:fotune_app/page/Profile/ChongZhiPage.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/page/stock/model/StockIndex.dart';
 import 'package:fotune_app/utils/Compute.dart';
 import 'package:fotune_app/utils/UIData.dart';
@@ -30,6 +31,8 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   List<StockIndex> markets = [];
   List<NiuPeople> niuPeoples = [];
   List<Carousel> banners = [];
+
+  var bus = new EventBus();
 
   @override
   void initState() {

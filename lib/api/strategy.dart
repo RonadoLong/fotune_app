@@ -30,7 +30,6 @@ Future<Response> QueryShellStrategy(params) async {
 Future<StrategyResp> GetStrategyList(uid, pageNum, pageSize) async {
   var url = "/strategy/MyList/$uid/$pageNum/$pageSize";
   var response = await Http().get(url);
-  print(response);
   var res = StrategyResp.fromJson(response);
   return res;
 }

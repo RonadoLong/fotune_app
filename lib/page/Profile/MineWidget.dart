@@ -10,7 +10,6 @@ import 'package:fotune_app/page/Profile/TiXianPage.dart';
 import 'package:fotune_app/page/Profile/model/BankResp.dart';
 import 'package:fotune_app/page/Strategy/FinishStrategyPage.dart';
 import 'package:fotune_app/page/Strategy/MyStrategyPage.dart';
-import 'package:fotune_app/page/Strategy/StrategyPage.dart';
 import 'package:fotune_app/utils/ComstomBtnColumn.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';

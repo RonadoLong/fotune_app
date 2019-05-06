@@ -1,6 +1,5 @@
 #!/bin/bash
 
-build android
 echo '<============== begin build android ==============>'
 flutter build apk
 rm /Users/ronado/Desktop/app-release.apk

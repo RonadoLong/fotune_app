@@ -42,13 +42,8 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
   List<SellAndBuy> sellList = [];
   List<SellAndBuy> buyList = [];
 
-  double traded_num,
-      traded_amount,
-      gains,
-      yesterday_close,
-      current_prices,
-      today_open;
-  String type, stock_code2, stock_code, stock_name;
+
+  String type;
 
   String url = "";
   int index = 1;
@@ -81,7 +76,9 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    type = enity.type;
+    setState(() {
+      type = enity.type;
+    });
     initData();
   }
 
@@ -106,7 +103,7 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
       isShow = true;
     });
 
-    Widget body = userInfo == null
+    Widget body = stock == null
         ? Center(
             child: CircularProgressIndicator(),
           )
@@ -121,39 +118,8 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
   }
 
   void initData() {
-
-    if ("stock" == type) {
-      Stock stock = enity.data;
-      stock_name = stock.name;
-      stock_code = stock.stock_code;
-      stock_code2 = stock.stock_code2;
-      traded_num = double.parse(stock.traded_num);
-      traded_amount = double.parse(stock.traded_amount);
-      gains = stock.gains;
-
-      setState(() {
-        url = "$host/api/client/marker/timeline/$stock_code";
-      });
-      yesterday_close = double.parse(stock.yesterday_close);
-      current_prices = double.parse(stock.current_prices);
-      today_open = double.parse(stock.today_open);
-
-      sellList.add(SellAndBuy("卖5", stock.sell5, stock.sell5_apply_num));
-      sellList.add(SellAndBuy("卖4", stock.sell4, stock.sell4_apply_num));
-      sellList.add(SellAndBuy("卖3", stock.sell3, stock.sell3_apply_num));
-      sellList.add(SellAndBuy("卖2", stock.sell2, stock.sell2_apply_num));
-      sellList.add(SellAndBuy("卖1", stock.sell1, stock.sell1_apply_num));
-      buyList.add(SellAndBuy("买1", stock.buy1, stock.buy1_apply_num));
-      buyList.add(SellAndBuy("买2", stock.buy2, stock.buy2_apply_num));
-      buyList.add(SellAndBuy("买3", stock.buy3, stock.buy3_apply_num));
-      buyList.add(SellAndBuy("买4", stock.buy4, stock.buy4_apply_num));
-      buyList.add(SellAndBuy("卖5", stock.buy5, stock.buy5_apply_num));
-    } else {
-      StockIndex stockIndex = enity.data;
-      stock_name = stockIndex.name;
-      stock_code = stockIndex.stock_code;
-      stock_code2 = stockIndex.stock_code2;
-    }
+    Stock stock = enity.data;
+    loadStockData(1, stock.stock_code2);
 
     User user = GetLocalUser();
     if (user == null) {
@@ -162,7 +128,6 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
         if (res.code == 1000) {
           setState(() {
             userInfo = res.data;
-            stock = stock;
           });
         }
       });
@@ -213,7 +178,8 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
                     setState(() {
                       isShow = false;
                     });
-                    this.loadHTML();
+            flutterWebviewPlugin.show();
+
           });
         },
         color: UIData.primary_color,
@@ -238,12 +204,12 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
         margin: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 0.0),
         child: Column(
           children: <Widget>[
-            Text(stock_name,
+            Text(stock != null ? stock.name : "",
                 style: new TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w500,
                     color: Colors.white)),
-            Text(stock_code,
+            Text(stock != null ? stock.stock_code : "",
                 style: new TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w200,
@@ -261,8 +227,8 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
         setState(() {
           isShow = false;
           url = i == 1
-              ? "$host/api/client/marker/timeline/$stock_code"
-              : "$host/api/client/marker/kline/$stock_code";
+              ? "$host/api/client/marker/timeline/${stock.stock_code}"
+              : "$host/api/client/marker/kline/${stock.stock_code}";
         });
       },
     );
@@ -363,7 +329,7 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
                         Expanded(
                           child: Container(
                             child: Text(
-                              today_open.toStringAsFixed(2),
+                              stock.today_open.toStringAsFixed(2),
                               style: new TextStyle(
                                   fontSize: 12.0, color: Colors.black),
                             ),
@@ -387,7 +353,7 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
                         Expanded(
                           child: Container(
                             child: Text(
-                              (traded_num / 1000000).toStringAsFixed(2) + "万手",
+                              (stock.traded_num / 1000000).toStringAsFixed(2) + "万手",
                               maxLines: 1,
                               style: new TextStyle(
                                   fontSize: 12.0, color: Colors.black),
@@ -421,7 +387,7 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
                       Expanded(
                         child: Container(
                           child: Text(
-                            yesterday_close.toStringAsFixed(2),
+                            stock.yesterday_close.toStringAsFixed(2),
                             style: new TextStyle(
                                 fontSize: 12.0, color: Colors.black),
                           ),
@@ -445,7 +411,7 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
                       Expanded(
                         child: Container(
                           child: Text(
-                            (traded_amount ~/ 10000).toString() + "万",
+                            (stock.traded_amount / 10000).toString() + "万",
                             style: new TextStyle(
                                 fontSize: 12.0, color: Colors.black),
                             maxLines: 1,
@@ -469,37 +435,45 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
 
 
   Future<Null> pullToRefresh() async {
-    getDatas(2);
+    loadStockData(2, this.stock.stock_code2);
     return null;
   }
 
-  void getDatas(int requestType) {
-    if ("stock" == type) {
-      String url = "http://hq.sinajs.cn/list=" + stock_code2;
-      fetch(url).then((data) {
-        setState(() {
-          List<String> stockstrs = data.split(";");
-          setState(() {
-            String str = stockstrs[0];
-            Stock stock = new Stock();
-            stock = DealStocks(str, stock);
-            traded_num = double.parse(stock.traded_num);
-            traded_amount = double.parse(stock.traded_amount);
-            gains =
-                ComputeGainsRate(yesterday_close, current_prices, today_open);
+  loadStockData(int requestType, String code) {
+    String url = "http://hq.sinajs.cn/list=" + code;
 
-            yesterday_close = double.parse(stock.yesterday_close);
-            current_prices = double.parse(stock.current_prices);
-            today_open = double.parse(stock.today_open);
-          });
-          if (requestType == 2) {
-            ShowToast("刷新成功");
-          }
-        });
-      }).catchError((e) {
-//        ShowToast("网络异常，请检查");
+    fetch(url).then((data) {
+      List<String> stockstrs = data.split(";");
+      String str = stockstrs[0];
+      Stock dealStocks = DealStocks(str);
+      String dealUrl = "$host/api/client/marker/timeline/" + dealStocks.stock_code;
+
+      setState(() {
+        stock = dealStocks;
+        stock.gains = ComputeGainsRate(dealStocks.yesterday_close, dealStocks.current_prices, dealStocks.today_open);
+
+        sellList = [];
+        buyList = [];
+
+        sellList.add(SellAndBuy("卖5", stock.sell5, stock.sell5_apply_num));
+        sellList.add(SellAndBuy("卖4", stock.sell4, stock.sell4_apply_num));
+        sellList.add(SellAndBuy("卖3", stock.sell3, stock.sell3_apply_num));
+        sellList.add(SellAndBuy("卖2", stock.sell2, stock.sell2_apply_num));
+        sellList.add(SellAndBuy("卖1", stock.sell1, stock.sell1_apply_num));
+        buyList.add(SellAndBuy("买1", stock.buy1, stock.buy1_apply_num));
+        buyList.add(SellAndBuy("买2", stock.buy2, stock.buy2_apply_num));
+        buyList.add(SellAndBuy("买3", stock.buy3, stock.buy3_apply_num));
+        buyList.add(SellAndBuy("买4", stock.buy4, stock.buy4_apply_num));
+        buyList.add(SellAndBuy("卖5", stock.buy5, stock.buy5_apply_num));
+
+        url = dealUrl;
       });
-    }
+
+      flutterWebviewPlugin.reloadUrl(dealUrl);
+      if (requestType == 2) {
+        ShowToast("刷新成功");
+      }
+    }).catchError((e) {});
   }
 
   Future fetch(String url) async {
@@ -511,14 +485,13 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
 
   ShowPrices() {
     Color showColor;
-    String gainsNum =
-        ComputeGainsNum(yesterday_close, current_prices, today_open);
-    String gainsStr = (gains * 100).toStringAsFixed(2) + "%";
-    if (gains > 0) {
+    String gainsNum = ComputeGainsNum(stock.yesterday_close, stock.current_prices, stock.today_open);
+    String gainsStr = (stock.gains * 100).toStringAsFixed(2) + "%";
+    if (stock.gains > 0) {
       showColor = Colors.red;
       gainsStr = "+" + gainsStr;
       gainsNum = "+" + gainsNum;
-    } else if (gains < 0) {
+    } else if (stock.gains < 0) {
       showColor = Colors.green;
     } else {
       showColor = Colors.black38;
@@ -529,7 +502,7 @@ class StockDetailsPageState extends State<StockDetailsPage> with SingleTickerPro
         children: <Widget>[
           Container(
             child: Text(
-              current_prices.toStringAsFixed(2),
+              stock.current_prices.toStringAsFixed(2),
               style: new TextStyle(fontSize: 24.0, color: showColor),
             ),
             margin: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),

@@ -10,6 +10,7 @@ import 'package:fotune_app/page/Profile/SettingPage.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
+// import 'package:package_info/package_info.dart';
 
 class MinePage extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class MinePageState extends State<MinePage> {
     Icons.access_alarm,
     Icons.account_circle,
     Icons.data_usage,
+    Icons.data_usage,
   ];
   var userAvatar = "https://image.showm.xin/wb/user/default-user-img5.png";
   UserInfo userInfo;
@@ -38,9 +40,12 @@ class MinePageState extends State<MinePage> {
   );
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     loadUserInfo();
+    // PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    // String version = packageInfo.version;
+    // print("版本号是: ${version}");
   }
 
   Future<void> _handleRefresh() {
@@ -53,7 +58,7 @@ class MinePageState extends State<MinePage> {
     });
   }
 
-  void loadUserInfo() {
+  void loadUserInfo() async {
     User user = GetLocalUser();
     if (user == null) {
       return;
@@ -64,7 +69,7 @@ class MinePageState extends State<MinePage> {
           userInfo = res.data;
         });
       } else {
-        ShowToast("加载数据失败，请重试");
+        ShowToast(res.msg);
         setState(() {
           user = null;
         });

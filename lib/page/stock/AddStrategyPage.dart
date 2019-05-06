@@ -8,6 +8,7 @@ import 'package:fotune_app/api/Setting.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/Home/NewsDetailsPage.dart';
+import 'package:fotune_app/page/common/CommonWidget.dart';
 import 'package:fotune_app/page/stock/DiscoverWidget.dart';
 import 'package:fotune_app/page/stock/model/Setting.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
@@ -121,7 +122,7 @@ class AddStrategyPageState extends State<AddStrategyPage> {
 
     // 操盘资金 / 限价 = 股数
     double count =
-        amount.ceilToDouble() / double.parse(stock.current_prices) / 100;
+        amount.ceilToDouble() / stock.current_prices / 100;
 
     if (count >= 1) {
       stockCount = count.toInt() * 100;
@@ -129,7 +130,7 @@ class AddStrategyPageState extends State<AddStrategyPage> {
       stockCount = 0;
     }
     String liYong =
-        (stockCount * double.parse(stock.current_prices) / amount * 100)
+        (stockCount * stock.current_prices / amount * 100)
             .toStringAsFixed(2);
     double liYongCount = double.parse(liYong);
 
@@ -219,10 +220,12 @@ class AddStrategyPageState extends State<AddStrategyPage> {
                   });
                   if (res.code == 1000) {
                     ShowToast("添加成功");
+                    handleRefresh((){
+                      Navigator.of(context).pop();
+                    });
                   } else {
                     ShowToast(res.msg);
                   }
-                  Navigator.of(context).pop();
                 }).catchError((res) {
                   setState(() {
                     loading = false;

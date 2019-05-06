@@ -26,5 +26,5 @@ GotoRegisterPage(BuildContext context) {
 
 GotoSearchPage(BuildContext context) {
   Navigator.push(
-      context, MaterialPageRoute(builder: (context) => StockSearchPage()));
+      context, MaterialPageRoute(builder: (context) => StockSearchPage(false)));
 }

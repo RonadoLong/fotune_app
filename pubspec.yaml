@@ -41,6 +41,7 @@ dependencies:
   city_pickers: ^0.1.14
   flutter_picker:
     git: https://github.com/yangyxd/flutter_picker.git
+  package_info: ^0.4.0+2
 
 dev_dependencies:
   flutter_test:

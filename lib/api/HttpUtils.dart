@@ -4,7 +4,7 @@ import 'package:fotune_app/model/User.dart';
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
 const PROHOST = "http://app.caifutong.live";
 const DEVHOST = "http://127.0.0.1:9527";
-String host = inProduction ? PROHOST : DEVHOST;
+String host = inProduction ? PROHOST : PROHOST;
 
 class Http {
   static Http instance;
@@ -43,7 +43,7 @@ class Http {
     }, onResponse: (Response response) {
       // 在返回响应数据之前做一些预处理
   
-      print("InterceptorsWrapper ===== $response.data ");
+      // print("InterceptorsWrapper ===== $response.data ");
       return response; // continue
     }, onError: (DioError e) {
       // ShowToast("请求失败，请重试");

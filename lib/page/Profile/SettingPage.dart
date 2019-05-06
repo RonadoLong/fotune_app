@@ -208,7 +208,6 @@ class SettingPageState extends State<SettingPage> {
                   SpUtil.clear().then((res) {
                     if (res) {
                       ShowToast("退出成功");
-                    
                       scheduleMicrotask((){
                         bus.emit("logout");
                       });
@@ -383,9 +382,7 @@ class SettingPageState extends State<SettingPage> {
                 var newPwd = _newPWDController.text.trim();
                 var againPwd = _againNewController.text.trim();
 
-                if (ordPWD.length >= 6 &&
-                    newPwd.length >= 6 &&
-                    againPwd == newPwd) {
+                if (ordPWD.length >= 6 && newPwd.length >= 6 && againPwd == newPwd) {
                   if (ordPWD == newPwd) {
                     ShowToast("新旧密码不能一样");
                     return;
