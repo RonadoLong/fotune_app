@@ -29,14 +29,14 @@ class SellAndBuy {
 }
 
 class CreateStrategyPage extends StatefulWidget {
-
   bool initShow = false;
 
   @override
   State<StatefulWidget> createState() => new CreateStrategyPageState();
 }
 
-class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
+class CreateStrategyPageState extends State<CreateStrategyPage>
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   Stock stock;
   UserInfo userInfo;
 
@@ -59,15 +59,26 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
 
   bool isCurrent = true;
 
+  double scrY = 290;
+
   @override
   bool get wantKeepAlive => true;
+
+  @protected
+  final ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(() {
+      double offset = _scrollController.offset;
+      print(offset);
+      flutterWebviewPlugin.resize(new Rect.fromLTWH(
+          0.0, 290 - offset, MediaQuery.of(context).size.width, 270.0));
+    });
 
     bus.on("changeTabStatus", (arg) {
-      if (this.mounted){
+      if (this.mounted) {
         setState(() {
           isCurrent = arg;
         });
@@ -90,14 +101,14 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
     });
 
     // 监听登录事件
-    bus.on("login", (arg){
+    bus.on("login", (arg) {
       loadUser();
     });
 
-    bus.on("logout", (arg){
-       setState(() {
-         userInfo = null;
-       });
+    bus.on("logout", (arg) {
+      setState(() {
+        userInfo = null;
+      });
     });
 
     initData();
@@ -107,53 +118,63 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
 
   Container renderSearch() {
     return Container(
-      height: 50,
+      height: 40,
       color: Colors.white,
       padding: EdgeInsets.all(4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-            Row(
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+              ),
+              Text(stock.name,
+                  style: new TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w500,
+                      color: UIData.normal_font_color)),
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+              ),
+              Text(stock.stock_code,
+                  style: new TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w200,
+                      color: UIData.normal_font_color)),
+            ],
+          ),
+          RaisedButton(
+            onPressed: () {
+              flutterWebviewPlugin.hide();
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => StockSearchPage(true)))
+                  .then((call) {
+                print(call);
+                if (call != null && call != "") {
+                  loadStockData(1, call);
+                }
+                flutterWebviewPlugin.show();
+              });
+            },
+            color: UIData.primary_color,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 10),),
-                Text(stock.name,
-                    style: new TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w500,
-                        color: UIData.normal_font_color)),
-                Padding(padding: EdgeInsets.only(left: 10),),
-                Text(stock.stock_code,
-                    style: new TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w200,
-                        color: UIData.normal_font_color)),
+                Text(
+                  "查看更多",
+                  style: TextStyle(color: Colors.white),
+                ),
+                Padding(padding: EdgeInsets.only(left: 4)),
+                Icon(
+                  Icons.search,
+                  color: Colors.white,
+                )
               ],
             ),
-            RaisedButton(
-              onPressed: () {
-                flutterWebviewPlugin.hide();
-                 Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => StockSearchPage(true)))
-                      .then((call) {
-                        print(call);
-                      if(call != null && call != "") {
-                        loadStockData(1, call);
-                      }
-                      flutterWebviewPlugin.show();
-                  });
-              },
-              color: UIData.primary_color,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Text("查看更多", style: TextStyle(color: Colors.white),),
-                  Padding(padding: EdgeInsets.only(left: 4)),
-                  Icon(Icons.search, color: Colors.white,)
-                ],
-              ),
-            ),
+          ),
         ],
       ),
     );
@@ -164,12 +185,12 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
   loadHTML() {
     if (context != null) {
       flutterWebviewPlugin.launch(
-      url,
-      clearCache: true,
-      withZoom: false,
-      rect: new Rect.fromLTWH(
-          0.0, 310.0, MediaQuery.of(context).size.width, 270.0),
-    );
+        url,
+        clearCache: true,
+        withZoom: false,
+        rect: new Rect.fromLTWH(
+            0.0, scrY, MediaQuery.of(context).size.width, 270.0),
+      );
     }
   }
 
@@ -181,9 +202,22 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
             child: CircularProgressIndicator(),
           )
         : new RefreshIndicator(
-            child: mainWidget(),
-            onRefresh: pullToRefresh,
-          );
+            onRefresh: (() => pullToRefresh()),
+            color: UIData.refresh_color, //刷新控件的颜色
+            child: ListView.separated(
+              controller: _scrollController,
+              itemCount: 1,
+              itemBuilder: (context, index) {
+                return mainWidget();
+              },
+              physics: const AlwaysScrollableScrollPhysics(),
+              separatorBuilder: (context, idx) {
+                return Container(
+                  height: 5,
+                  color: Color.fromARGB(50, 183, 187, 197),
+                );
+              },
+            ));
 
     return Scaffold(
       body: body,
@@ -203,8 +237,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
         if (res.code == 1000) {
           if (this.mounted) {
             setState(() {
-            userInfo = res.data;
-          });
+              userInfo = res.data;
+            });
           }
         }
       });
@@ -213,10 +247,15 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
 
   Widget mainWidget() {
     return Column(
-      children: <Widget>[renderSearch(), TopMarket(), getKline(), getSellAndBuy(), buildBottom()],
+      children: <Widget>[
+        renderSearch(),
+        TopMarket(),
+        getKline(),
+        getSellAndBuy(),
+        buildBottom()
+      ],
     );
   }
-
 
   Widget buildBottom() {
     return Container(
@@ -225,18 +264,18 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
         onPressed: () {
           flutterWebviewPlugin.hide();
           if (this.userInfo == null) {
-            GotoLoginPage(context).then((val){
+            GotoLoginPage(context).then((val) {
               flutterWebviewPlugin.show();
             });
             return;
-          } 
+          }
 
           Navigator.push(
               context,
               new MaterialPageRoute(
                   builder: (context) =>
                       AddStrategyPage(this.stock, userInfo))).then((res) {
-           flutterWebviewPlugin.show();
+            flutterWebviewPlugin.show();
           });
         },
         color: UIData.primary_color,
@@ -252,32 +291,6 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
     );
   }
 
-  // buildAppBar() {
-  //   return AppBar(
-  //     iconTheme: new IconThemeData(color: Colors.white),
-  //     brightness: Brightness.light,
-  //     backgroundColor: UIData.primary_color,
-  //     title: Container(
-  //       margin: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 0.0),
-  //       child: Column(
-  //         children: <Widget>[
-  //           Text(stock.name,
-  //               style: new TextStyle(
-  //                   fontSize: 20.0,
-  //                   fontWeight: FontWeight.w500,
-  //                   color: Colors.white)),
-  //           Text(stock.stock_code,
-  //               style: new TextStyle(
-  //                   fontSize: 12.0,
-  //                   fontWeight: FontWeight.w200,
-  //                   color: Colors.white)),
-  //         ],
-  //       ),
-  //     ),
-  //     centerTitle: true,
-  //   );
-  // }
-
   Widget getKline() {
     return SelectedWidget(
       (i) {
@@ -285,8 +298,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
           isShow = false;
           url = i == 1
               ? "$host/api/client/marker/timeline/" + stock.stock_code
-              : "$host/api/client/marker/kline/"+ stock.stock_code;
-              flutterWebviewPlugin.reloadUrl(url);
+              : "$host/api/client/marker/kline/" + stock.stock_code;
+          flutterWebviewPlugin.reloadUrl(url);
         });
       },
     );
@@ -294,24 +307,24 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
 
   Widget getSellAndBuy() {
     return Container(
-        margin: EdgeInsets.only(top: 290),
-        child: Column(
-          children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: buildSellAndBuy(),
-            ),
-            Padding(
-              padding: EdgeInsets.all(3),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: buildBuy(),
-            ),
-          ],
-        ),
+      margin: EdgeInsets.only(top: 290),
+      child: Column(
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: buildSellAndBuy(),
+          ),
+          Padding(
+            padding: EdgeInsets.all(3),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: buildBuy(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -354,7 +367,6 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
       ),
     );
   }
-
 
   // ignore: non_constant_identifier_names
   Widget TopMarket() {
@@ -410,7 +422,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
                         Expanded(
                           child: Container(
                             child: Text(
-                              (stock.traded_num / 1000000).toStringAsFixed(2) + "万手",
+                              (stock.traded_num / 1000000).toStringAsFixed(2) +
+                                  "万手",
                               maxLines: 1,
                               style: new TextStyle(
                                   fontSize: 12.0, color: Colors.black),
@@ -499,37 +512,38 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
     String url = "http://hq.sinajs.cn/list=" + code;
 
     fetch(url).then((data) {
-        List<String> stockstrs = data.split(";");
-        String str = stockstrs[0];
-        Stock dealStocks = DealStocks(str);
+      List<String> stockstrs = data.split(";");
+      String str = stockstrs[0];
+      Stock dealStocks = DealStocks(str);
 
-        if(this.mounted) {
-           setState(() {
-            stock = dealStocks;
-            stock.gains = ComputeGainsRate(dealStocks.yesterday_close, dealStocks.current_prices, dealStocks.today_open);
+      if (this.mounted) {
+        setState(() {
+          stock = dealStocks;
+          stock.gains = ComputeGainsRate(dealStocks.yesterday_close,
+              dealStocks.current_prices, dealStocks.today_open);
 
-            sellList = [];
-            buyList = [];
+          sellList = [];
+          buyList = [];
 
-            url = "$host/api/client/marker/timeline/" + dealStocks.stock_code;
+          url = "$host/api/client/marker/timeline/" + dealStocks.stock_code;
 
-            sellList.add(SellAndBuy("卖5", stock.sell5, stock.sell5_apply_num));
-            sellList.add(SellAndBuy("卖4", stock.sell4, stock.sell4_apply_num));
-            sellList.add(SellAndBuy("卖3", stock.sell3, stock.sell3_apply_num));
-            sellList.add(SellAndBuy("卖2", stock.sell2, stock.sell2_apply_num));
-            sellList.add(SellAndBuy("卖1", stock.sell1, stock.sell1_apply_num));
+          sellList.add(SellAndBuy("卖5", stock.sell5, stock.sell5_apply_num));
+          sellList.add(SellAndBuy("卖4", stock.sell4, stock.sell4_apply_num));
+          sellList.add(SellAndBuy("卖3", stock.sell3, stock.sell3_apply_num));
+          sellList.add(SellAndBuy("卖2", stock.sell2, stock.sell2_apply_num));
+          sellList.add(SellAndBuy("卖1", stock.sell1, stock.sell1_apply_num));
 
-            buyList.add(SellAndBuy("买1", stock.buy1, stock.buy1_apply_num));
-            buyList.add(SellAndBuy("买2", stock.buy2, stock.buy2_apply_num));
-            buyList.add(SellAndBuy("买3", stock.buy3, stock.buy3_apply_num));
-            buyList.add(SellAndBuy("买4", stock.buy4, stock.buy4_apply_num));
-            buyList.add(SellAndBuy("卖5", stock.buy5, stock.buy5_apply_num));
-          });
-        }
+          buyList.add(SellAndBuy("买1", stock.buy1, stock.buy1_apply_num));
+          buyList.add(SellAndBuy("买2", stock.buy2, stock.buy2_apply_num));
+          buyList.add(SellAndBuy("买3", stock.buy3, stock.buy3_apply_num));
+          buyList.add(SellAndBuy("买4", stock.buy4, stock.buy4_apply_num));
+          buyList.add(SellAndBuy("卖5", stock.buy5, stock.buy5_apply_num));
+        });
+      }
 
-        if (requestType == 2) {
-          ShowToast("刷新成功");
-        }
+      if (requestType == 2) {
+        ShowToast("刷新成功");
+      }
     }).catchError((e) {});
   }
 
@@ -541,8 +555,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
 
   ShowPrices() {
     Color showColor;
-    String gainsNum =
-        ComputeGainsNum(stock.yesterday_close, stock.current_prices, stock.today_open);
+    String gainsNum = ComputeGainsNum(
+        stock.yesterday_close, stock.current_prices, stock.today_open);
     String gainsStr = (stock.gains * 100).toStringAsFixed(2) + "%";
     if (stock.gains > 0) {
       showColor = Colors.red;
@@ -595,5 +609,4 @@ class CreateStrategyPageState extends State<CreateStrategyPage> with AutomaticKe
       ),
     );
   }
-
 }
