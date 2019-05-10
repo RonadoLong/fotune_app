@@ -34,8 +34,7 @@ dependencies:
   cached_network_image: ^0.5.0
   json_serializable: ^1.5.1
   flutter_spinkit: ^3.1.0
-#  webview_flutter: ^0.3.0
-  # flutter_inappbrowser: ^0.5.51
+  flutter_screenutil: ^0.5.2
   flustars: ^0.2.5
   loadmore: ^1.0.3
   city_pickers: ^0.1.14

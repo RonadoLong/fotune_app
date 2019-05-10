@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:fotune_app/api/HttpUtils.dart';
 import 'package:fotune_app/api/user.dart';
-import 'package:fotune_app/componets/WBSearchInputWidget.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/common/CommonWidget.dart';
@@ -12,6 +11,7 @@ import 'package:fotune_app/page/stock/SelectedWidget.dart';
 import 'package:fotune_app/page/stock/StockSearchPage.dart';
 import 'package:fotune_app/page/stock/model/Setting.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
+import 'package:fotune_app/utils/AdaptUtils.dart';
 import 'package:fotune_app/utils/Compute.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
@@ -29,8 +29,6 @@ class SellAndBuy {
 }
 
 class CreateStrategyPage extends StatefulWidget {
-  bool initShow = false;
-
   @override
   State<StatefulWidget> createState() => new CreateStrategyPageState();
 }
@@ -59,7 +57,9 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
   bool isCurrent = true;
 
-  double scrY = 290;
+  double scrY = AdaptUtils.px(350);
+
+  String code = "sz002230";
 
   @override
   bool get wantKeepAlive => true;
@@ -73,8 +73,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
     _scrollController.addListener(() {
       double offset = _scrollController.offset;
       print(offset);
-      flutterWebviewPlugin.resize(new Rect.fromLTWH(
-          0.0, 290 - offset, MediaQuery.of(context).size.width, 270.0));
+      flutterWebviewPlugin.resize(new Rect.fromLTWH(0.0, scrY - offset,
+          MediaQuery.of(context).size.width, AdaptUtils.px(540)));
     });
 
     bus.on("changeTabStatus", (arg) {
@@ -113,33 +113,38 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
     initData();
 
-    loadUser();
+     Timer countdownTimer =  new Timer.periodic(new Duration(seconds: 5), (timer) {
+        print("time to TimeLine data");
+        print(timer.tick);
+        initData();
+    });
+   
   }
 
   Container renderSearch() {
     return Container(
-      height: 40,
+      height: 36,
       color: Colors.white,
-      padding: EdgeInsets.all(4),
+      padding: EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Row(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 6),
               ),
               Text(stock.name,
                   style: new TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 18.0,
                       fontWeight: FontWeight.w500,
                       color: UIData.normal_font_color)),
               Padding(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 5),
               ),
               Text(stock.stock_code,
                   style: new TextStyle(
-                      fontSize: 14.0,
+                      fontSize: 13.0,
                       fontWeight: FontWeight.w200,
                       color: UIData.normal_font_color)),
             ],
@@ -154,6 +159,9 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
                   .then((call) {
                 print(call);
                 if (call != null && call != "") {
+                  setState(() {
+                    code = call;
+                  });
                   loadStockData(1, call);
                 }
                 flutterWebviewPlugin.show();
@@ -189,7 +197,7 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
         clearCache: true,
         withZoom: false,
         rect: new Rect.fromLTWH(
-            0.0, scrY, MediaQuery.of(context).size.width, 270.0),
+            0.0, scrY, MediaQuery.of(context).size.width, AdaptUtils.px(540)),
       );
     }
   }
@@ -225,7 +233,7 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
   }
 
   void initData() {
-    loadStockData(1, "sz002230");
+    loadStockData(1, this.code);
     loadUser();
   }
 
@@ -259,17 +267,18 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
   Widget buildBottom() {
     return Container(
-      margin: EdgeInsets.only(top: 18),
+      margin: EdgeInsets.only(top: 4),
       child: RaisedButton(
         onPressed: () {
+          loadUser();
           flutterWebviewPlugin.hide();
-          if (this.userInfo == null) {
+          User user = GetLocalUser();
+          if (user == null) {
             GotoLoginPage(context).then((val) {
               flutterWebviewPlugin.show();
             });
             return;
           }
-
           Navigator.push(
               context,
               new MaterialPageRoute(
@@ -307,7 +316,7 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
   Widget getSellAndBuy() {
     return Container(
-      margin: EdgeInsets.only(top: 290),
+      margin: EdgeInsets.only(top: AdaptUtils.px(580)),
       child: Column(
         children: <Widget>[
           Row(
@@ -371,140 +380,16 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
   // ignore: non_constant_identifier_names
   Widget TopMarket() {
     return new Container(
-      margin: new EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-      height: 50.0,
-      child: Row(
-        children: <Widget>[
-          new Expanded(
-            child: new Container(
-              child: ShowPrices(),
-            ),
-            flex: 1,
-          ),
-          new Expanded(
-            child: new Container(
-              padding: new EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "今    开",
-                          style: new TextStyle(
-                              fontSize: 12.0, color: Colors.black38),
-                          textAlign: TextAlign.left,
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              stock.today_open.toStringAsFixed(2),
-                              style: new TextStyle(
-                                  fontSize: 12.0, color: Colors.black),
-                            ),
-                            alignment: FractionalOffset.centerRight,
-                          ),
-                          flex: 1,
-                        )
-                      ],
-                    ),
-                    flex: 1,
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "成交量",
-                          style: new TextStyle(
-                              fontSize: 12.0, color: Colors.black38),
-                          textAlign: TextAlign.left,
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              (stock.traded_num / 1000000).toStringAsFixed(2) +
-                                  "万手",
-                              maxLines: 1,
-                              style: new TextStyle(
-                                  fontSize: 12.0, color: Colors.black),
-                            ),
-                            alignment: FractionalOffset.centerRight,
-                          ),
-                          flex: 1,
-                        )
-                      ],
-                    ),
-                    flex: 1,
-                  )
-                ],
-              ),
-            ),
-            flex: 1,
-          ),
-          new Expanded(
-            child: new Container(
-              padding: new EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-              child: new Column(children: <Widget>[
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "昨    收",
-                        style: new TextStyle(
-                            fontSize: 12.0, color: Colors.black38),
-                        textAlign: TextAlign.left,
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Text(
-                            stock.yesterday_close.toStringAsFixed(2),
-                            style: new TextStyle(
-                                fontSize: 12.0, color: Colors.black),
-                          ),
-                          alignment: FractionalOffset.centerRight,
-                        ),
-                        flex: 1,
-                      )
-                    ],
-                  ),
-                  flex: 1,
-                ),
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "成交额",
-                        style: new TextStyle(
-                            fontSize: 12.0, color: Colors.black38),
-                        textAlign: TextAlign.left,
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Text(
-                            (stock.traded_amount / 10000).toString() + "万",
-                            style: new TextStyle(
-                                fontSize: 12.0, color: Colors.black),
-                            maxLines: 1,
-                          ),
-                          alignment: FractionalOffset.centerRight,
-                        ),
-                        flex: 1,
-                      )
-                    ],
-                  ),
-                  flex: 1,
-                )
-              ]),
-            ),
-            flex: 1,
-          ),
-        ],
-      ),
+      margin: new EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+      color: Colors.white,
+      height: 30.0,
+      child: ShowPrices(),
     );
   }
 
   Future<Null> pullToRefresh() async {
     loadStockData(2, this.stock.stock_code2);
+    loadUser();
     return null;
   }
 
@@ -526,7 +411,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
           buyList = [];
 
           url = "$host/api/client/marker/timeline/" + dealStocks.stock_code;
-
+          flutterWebviewPlugin.reloadUrl(url);
+          
           sellList.add(SellAndBuy("卖5", stock.sell5, stock.sell5_apply_num));
           sellList.add(SellAndBuy("卖4", stock.sell4, stock.sell4_apply_num));
           sellList.add(SellAndBuy("卖3", stock.sell3, stock.sell3_apply_num));
@@ -553,7 +439,7 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
     return str;
   }
 
-  ShowPrices() {
+  Container ShowPrices() {
     Color showColor;
     String gainsNum = ComputeGainsNum(
         stock.yesterday_close, stock.current_prices, stock.today_open);
@@ -569,42 +455,29 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
     }
     return new Container(
       padding: new EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
-      child: Column(
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            child: Text(
-              stock.current_prices.toStringAsFixed(2),
-              style: new TextStyle(fontSize: 24.0, color: showColor),
-            ),
-            margin: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-            alignment: FractionalOffset.topLeft,
+          Text(
+            stock.current_prices.toStringAsFixed(2),
+            style: new TextStyle(fontSize: 24.0, color: showColor),
           ),
-          new Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  child: Text(
-                    gainsNum,
-                    style: new TextStyle(fontSize: 12.0, color: showColor),
-                    textAlign: TextAlign.left,
-                  ),
-                  alignment: FractionalOffset.bottomLeft,
-                ),
-                flex: 1,
-              ),
-              Expanded(
-                child: Container(
-                  child: Text(
-                    gainsStr,
-                    style: new TextStyle(fontSize: 12.0, color: showColor),
-                    textAlign: TextAlign.left,
-                  ),
-                  alignment: FractionalOffset.bottomLeft,
-                ),
-                flex: 1,
-              )
-            ],
-          )
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+          ),
+          Text(
+            gainsNum,
+            style: new TextStyle(fontSize: 12.0, color: showColor),
+            textAlign: TextAlign.left,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 5),
+          ),
+          Text(
+            gainsStr,
+            style: new TextStyle(fontSize: 12.0, color: showColor),
+            textAlign: TextAlign.left,
+          ),
         ],
       ),
     );

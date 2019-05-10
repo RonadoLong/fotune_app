@@ -95,9 +95,6 @@ Stock DealStocks(String str) {
   stock.sell5 = stock_item[29];
   stock.date = stock_item[30];
   stock.time = stock_item[31];
-
-  print("=========");
-  print(stock);
   return stock;
 }
 

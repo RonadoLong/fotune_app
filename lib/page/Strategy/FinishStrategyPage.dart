@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/api/user.dart';
@@ -12,20 +11,18 @@ import 'package:fotune_app/utils/UIData.dart';
 import 'package:date_format/date_format.dart';
 
 class FinishStrategyPage extends StatefulWidget {
-
   String title;
-  FinishStrategyPage(title){
+  FinishStrategyPage(title) {
     this.title = title;
   }
-
   @override
   State createState() {
     return FinishStrategyPageState();
   }
 }
 
-class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKeepAliveClientMixin{
-
+class FinishStrategyPageState extends State<FinishStrategyPage>
+    with AutomaticKeepAliveClientMixin {
   @protected
   final ScrollController scrollController = new ScrollController();
 
@@ -34,7 +31,7 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
   int pageNum = 1;
   int pageSize = 10;
   // 默认不显示加载更多
-  bool isShowMore = true; 
+  bool isShowMore = true;
   var bus = new EventBus();
 
   @override
@@ -42,7 +39,8 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
     super.initState();
 
     scrollController.addListener(() {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
         if (dataList.length >= pageSize) {
           print("load more data ========== ${(dataList.length >= pageSize)}");
           setState(() {
@@ -56,20 +54,14 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
     loadData(START_REQUEST);
 
     // 监听登录事件
-    bus.on("login", (arg){
-       loadData(REFRESH_REQIEST);
+    bus.on("login", (arg) {
+      loadData(REFRESH_REQIEST);
     });
 
-    bus.on("logout", (arg){
-       loadData(REFRESH_REQIEST);
+    bus.on("logout", (arg) {
+      loadData(REFRESH_REQIEST);
     });
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   scrollController.dispose();
-  // }
 
   loadData(int type) {
     User user = GetLocalUser();
@@ -79,40 +71,36 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
         if (res.code == 1000) {
           if (this.mounted) {
             setState(() {
-            if (type == LOADMORE_REQIEST) {
-              dataList.addAll(res.data.strategys);
-            } else {
-              dataList = res.data.strategys;
-            }
-            pageNum = currentPage;
-          });
+              if (type == LOADMORE_REQIEST) {
+                dataList.addAll(res.data.strategys);
+              } else {
+                dataList = res.data.strategys;
+              }
+              pageNum = currentPage;
+            });
           }
         } else if (res.code == 1004) {
-        
           if (type == LOADMORE_REQIEST) {
-          
           } else {
-              if (this.mounted) {
-                setState(() {
-                  dataList = dataList == null ? [] : dataList;
-                });
-              }
+            if (this.mounted) {
+              setState(() {
+                dataList = dataList == null ? [] : dataList;
+              });
+            }
           }
         }
-
-        handleRefresh((){
+        handleRefresh(() {
           setState(() {
             isShowMore = true;
           });
         });
-       
       }).catchError((err) {
         print(err);
-        if(this.mounted) {
+        if (this.mounted) {
           setState(() {
-          isShowMore = false;
-          dataList = [];
-        });
+            isShowMore = false;
+            dataList = [];
+          });
         }
       });
     } else {
@@ -122,15 +110,15 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
         });
       }
     }
-
-
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
+      appBar: widget.title == ""
+          ? null
+          : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
         child: buildBody(),
       ),
@@ -173,13 +161,16 @@ class FinishStrategyPageState extends State<FinishStrategyPage> with AutomaticKe
   }
 
   Widget buildBodyCell(CloseStrategys cs, int index) {
-    Color color = cs.detail.tranProfit.indexOf("-") != -1 ? Colors.green : Colors.red;
+    Color color =
+        cs.detail.tranProfit.indexOf("-") != -1 ? Colors.green : Colors.red;
 
     DateTime buyTime = DateTime.parse(cs.detail.buyTime);
-    String buyTimeStr = formatDate(buyTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    String buyTimeStr = formatDate(buyTime.add(Duration(hours: 8)),
+        [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     DateTime sellTime = DateTime.parse(cs.detail.sellTime);
-    String sellTimeStr = formatDate(sellTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    String sellTimeStr = formatDate(sellTime.add(Duration(hours: 8)),
+        [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     return Container(
         color: Colors.white,

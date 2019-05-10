@@ -10,11 +10,8 @@ class StrategyPage extends StatelessWidget {
   String title;
 
   StrategyPage(this.title);
-
-
   @override
   Widget build(BuildContext context) {
-    var createPage = CreateStrategyPage();
     var bus = new EventBus();
 
     return MaterialApp(
@@ -22,12 +19,13 @@ class StrategyPage extends StatelessWidget {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            title: new Text(title, style: new TextStyle(color: Colors.white)),
-            centerTitle: true,
-            iconTheme: new IconThemeData(color: Colors.white),
+            elevation: 0,
             backgroundColor: UIData.primary_color,
-            bottom: TabBar(
+             flexibleSpace: SafeArea(
+              child: TabBar(
               indicatorColor: Colors.white,
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorWeight: 3.0,
               tabs: [
                 Tab(text: "创建策略"),
                 Tab(text: "我的策略"),
@@ -35,15 +33,16 @@ class StrategyPage extends StatelessWidget {
               ],
               isScrollable: false,
               onTap: (index) {
-                print("changeTabStatus");
                 var idx = index == 0 ? true : false;
                 bus.emit("changeTabStatus", idx);
               }
             ),
+            ),
+            // bottom: 
           ),
           body: TabBarView(
             children: [
-              createPage,
+              CreateStrategyPage(),
               MyStrategyPage(""),
               FinishStrategyPage(""),
             ],

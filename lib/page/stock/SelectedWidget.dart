@@ -31,7 +31,7 @@ class SelectedWidgetState extends State<SelectedWidget> {
 
   Widget renderSelected() {
     return new Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.all(4.0),
       width: 300,
       height: 30,
       child: Row(

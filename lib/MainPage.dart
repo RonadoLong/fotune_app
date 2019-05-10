@@ -7,7 +7,6 @@ import 'package:fotune_app/page/Profile/MinePage.dart';
 import 'package:fotune_app/page/stock/MarketPage.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:flustars/flustars.dart';
-
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,14 +23,13 @@ class MainPageWidget extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPageWidget> {
+
+
   int _tabIndex = 0;
   var tabImages;
   var appBarTitles = ['首页', '自选', '策略', '我的'];
   var bus = new EventBus();
 
-  /*
-   * 存放三个页面，跟fragmentList一样
-   */
   var _pageList;
   final blueCode = Color(0xff1296db);
   final blueCode2 = Color(0xff515151);
@@ -68,6 +66,7 @@ class MainPageState extends State<MainPageWidget> {
 
   void load() async {
     await SpUtil.getInstance();
+
   }
 
   void initData() {
@@ -148,6 +147,7 @@ class MainPageState extends State<MainPageWidget> {
   Widget build(BuildContext context) {
     //初始化数据
     initData();
+   
     return Scaffold(
         body: IndexedStack(
           index: _tabIndex,

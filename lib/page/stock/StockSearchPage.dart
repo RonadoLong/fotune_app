@@ -5,6 +5,7 @@ import 'package:fotune_app/componets/CustomAppBar.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/page/stock/model/SearchResp.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
+import 'package:fotune_app/utils/UIData.dart';
 
 class StockSearchPage extends StatefulWidget {
   bool isCall;
@@ -24,82 +25,83 @@ class StockSearchPageState extends State<StockSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomWidget.BuildAppBar("搜索", context),
-        body: ListView.builder(
-            itemCount: list.length + 1,
-            padding: new EdgeInsets.all(20.0),
-            itemBuilder: (BuildContext context, int index) {
-              if (index == 0) {
-                return buildSearch();
-              } else {
-                SearchStock s = list[index - 1];
-                return GestureDetector(
-                    onTap: () {
-                      if (widget.isCall) {
-                         var code = s.market + s.code;
-                          Navigator.of(context).pop(code);
-                          return;
-                      }
+      appBar: AppBar(
+        title: buildSearch(),
+        backgroundColor: UIData.primary_color,
+      ),
+      body: ListView.builder(
+          itemCount: list.length,
+          padding: new EdgeInsets.all(20.0),
+          itemBuilder: (BuildContext context, int index) {
+            SearchStock s = list[index];
+            return GestureDetector(
+                onTap: () {
+                  if (widget.isCall) {
+                    var code = s.market + s.code;
+                    Navigator.of(context).pop(code);
+                    return;
+                  }
 
-                      if (this.pushing) {
-                        return;
-                      }
+                  if (this.pushing) {
+                    ShowToast("正在处理中...");
+                    return;
+                  }
 
+                  setState(() {
+                    this.pushing = true;
+                  });
+
+                  User user = GetLocalUser();
+                  if (user != null) {
+                    var query = {
+                      "userId": user.user_id,
+                      "code": s.code,
+                      "name": s.name
+                    };
+                    AddStock(query).then((res) {
                       setState(() {
-                        this.pushing = true;
+                        this.pushing = false;
                       });
-
-                      User user = GetLocalUser();
-                      if (user != null) {
-                        var query = {
-                          "userId": user.user_id,
-                          "code": s.code,
-                          "name": s.name
-                        };
-                        AddStock(query).then((res) {
-                          setState(() {
-                            this.pushing = false;
-                          });
-                          if (res.code == 1000) {
-                            ShowToast("已添加到自选");
-                            setState(() {
-                              list = [];
-                            });
-                          } else {
-                            ShowToast(res.msg);
-                          }
-                        }).catchError((err) {
-                          setState(() {
-                            this.pushing = false;
-                          });
-//                          ShowToast("网络出错");
+                      if (res.code == 1000) {
+                        ShowToast("已添加到自选");
+                        setState(() {
+                          list = [];
                         });
+                      } else {
+                        ShowToast(res.msg);
                       }
-                    },
-                    child: Container(
-                      height: 50,
-                      child: Column(
+                    }).catchError((err) {
+                      setState(() {
+                        this.pushing = false;
+                      });
+//                          ShowToast("网络出错");
+                    });
+                  }
+                },
+                child: Container(
+                  height: 50,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Text(s.code),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                              ),
-                              Text(s.name),
-                            ],
+                          Text(s.code),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10, right: 10),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 15, bottom: 10),
-                            height: 0.5,
-                            color: Colors.black12,
-                          ),
+                          Text(s.name),
                         ],
                       ),
-                    ));
-              }
-            }));
+                      Container(
+                        margin: EdgeInsets.only(top: 15, bottom: 10),
+                        height: 0.5,
+                        color: Colors.black12,
+                      ),
+                    ],
+                  ),
+                ));
+          }),
+    );
   }
 
   loadData(query) {
@@ -120,20 +122,21 @@ class StockSearchPageState extends State<StockSearchPage> {
   Widget buildSearch() {
     return Container(
       height: 70.0,
-      margin: EdgeInsets.only(bottom: 20),
       child: Card(
-        margin: EdgeInsets.all(8.0),
         child: Row(
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
+              child: Icon(
+                Icons.search,
+                color: UIData.normal_font_color,
+              ),
             ),
             Expanded(
               child: TextField(
                 decoration: new InputDecoration(
                   hintStyle: TextStyle(fontSize: 13),
-                  hintText: '请输入要添加自选股票名称/代码/简拼',
+                  hintText: '请输入股票名称/代码/简拼',
                   border: InputBorder.none,
                 ),
                 onChanged: (val) {
@@ -145,7 +148,7 @@ class StockSearchPageState extends State<StockSearchPage> {
               flex: 1,
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: Icon(Icons.send, color: UIData.normal_font_color),
               onPressed: () {
                 if (key.length == 0) {
                   ShowToast("请输入要查找的信息");

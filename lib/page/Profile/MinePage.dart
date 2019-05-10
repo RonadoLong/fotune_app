@@ -10,6 +10,7 @@ import 'package:fotune_app/page/Profile/SettingPage.dart';
 import 'package:fotune_app/utils/NavigatorUtils.dart';
 import 'package:fotune_app/utils/ToastUtils.dart';
 import 'package:fotune_app/utils/UIData.dart';
+import 'package:package_info/package_info.dart';
 // import 'package:package_info/package_info.dart';
 
 class MinePage extends StatefulWidget {
@@ -43,9 +44,6 @@ class MinePageState extends State<MinePage> {
   void initState()  {
     super.initState();
     loadUserInfo();
-    // PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    // String version = packageInfo.version;
-    // print("版本号是: ${version}");
   }
 
   Future<void> _handleRefresh() {
@@ -78,6 +76,10 @@ class MinePageState extends State<MinePage> {
       print(err);
       ShowToast("未知错误，请重试");
     });
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    print("版本号是: ${version}");
   }
 
   Widget getIconImage(path) {

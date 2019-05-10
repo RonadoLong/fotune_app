@@ -15,7 +15,9 @@ import 'package:fotune_app/utils/UIData.dart';
 
 class MyStrategyPage extends StatefulWidget {
   String title;
-  MyStrategyPage(title){this.title = title;}
+  MyStrategyPage(title) {
+    this.title = title;
+  }
 
   @override
   State createState() {
@@ -23,10 +25,9 @@ class MyStrategyPage extends StatefulWidget {
   }
 }
 
-class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveClientMixin{
-
-  @override
-  bool get wantKeepAlive => true;
+class MyStrategyPageState extends State<MyStrategyPage> {
+  // @override
+  // bool get wantKeepAlive => true;
 
   List<Strategy> strategyList;
 
@@ -49,12 +50,13 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     loadData(START_REQUEST);
 
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         if (strategyList.length >= pageSize) {
-          if(this.mounted) {
-             setState(() {
-            isShowMore = false;
-          });
+          if (this.mounted) {
+            setState(() {
+              isShowMore = false;
+            });
           }
         }
         loadData(LOADMORE_REQIEST);
@@ -62,20 +64,30 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     });
 
     // 监听登录事件
-    bus.on("login", (arg){
-       loadData(REFRESH_REQIEST);
+    bus.on("login", (arg) {
+      loadData(REFRESH_REQIEST);
     });
 
-    bus.on("logout", (arg){
-       loadData(REFRESH_REQIEST);
+    bus.on("logout", (arg) {
+      loadData(REFRESH_REQIEST);
     });
+
+    bus.on("refreshMineStrategyData", (arg) {
+      print("refreshMineStrategyData");
+      loadData(REFRESH_REQIEST);
+    });
+
+    // new Timer(Duration(seconds: 8), (){
+    //   print("time to refresh data");
+    //   loadData(REFRESH_REQIEST);
+    // });
   }
 
   loadData(int reqType) {
     User user = GetLocalUser();
     if (user == null) {
-      if(this.mounted) {
-         setState(() {
+      if (this.mounted) {
+        setState(() {
           strategyList = [];
         });
       }
@@ -85,35 +97,34 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
         if (res.code == 1000) {
           if (this.mounted) {
             setState(() {
-            if (reqType == LOADMORE_REQIEST) {
-              strategyList.addAll(res.data.myStrategy);
-            } else {
-              strategyList = res.data.myStrategy;
-            }
-            pageNum = currenPage;
-          });
+              if (reqType == LOADMORE_REQIEST) {
+                strategyList.addAll(res.data.myStrategy);
+              } else {
+                strategyList = res.data.myStrategy;
+              }
+              pageNum = currenPage;
+            });
           }
         } else if (res.code == 1004) {
-          if(this.mounted) {
+          if (this.mounted) {
             setState(() {
-            strategyList = strategyList == null ? [] : strategyList;
-          });
+              strategyList = strategyList == null ? [] : strategyList;
+            });
           }
         }
 
-        handleRefresh((){
+        handleRefresh(() {
           setState(() {
             isShowMore = true;
           });
         });
-
-      }).catchError((err){
+      }).catchError((err) {
         print(err);
-        if(this.mounted) {
+        if (this.mounted) {
           setState(() {
-          isShowMore = true;
-          strategyList = [];
-        });
+            isShowMore = true;
+            strategyList = [];
+          });
         }
       });
     }
@@ -124,7 +135,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
       return CircularProgressIndicator(
         backgroundColor: UIData.refresh_color,
       );
-    }  else {
+    } else {
       return new RefreshIndicator(
           onRefresh: (() => handleRefresh(loadData(REFRESH_REQIEST))),
           color: UIData.refresh_color, //刷新控件的颜色
@@ -132,19 +143,20 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
             itemCount: strategyList.length + 1,
             controller: _scrollController,
             itemBuilder: (context, index) {
-               if (strategyList.length == 0) {
-                 return buildEmptyView();
-               } else {
-                  if (index < strategyList.length) {
-                    Strategy strategy = strategyList[index];
-                    return GestureDetector(
-                      onTap: () {},
-                      child: buildListView(context, strategy),
-                    );
-                  } else {
-                    return Offstage(offstage: isShowMore, child: BuildLoadMoreView());
-                  }
-               }
+              if (strategyList.length == 0) {
+                return buildEmptyView();
+              } else {
+                if (index < strategyList.length) {
+                  Strategy strategy = strategyList[index];
+                  return GestureDetector(
+                    onTap: () {},
+                    child: buildListView(context, strategy),
+                  );
+                } else {
+                  return Offstage(
+                      offstage: isShowMore, child: BuildLoadMoreView());
+                }
+              }
             },
             physics: const AlwaysScrollableScrollPhysics(),
             separatorBuilder: (context, idx) {
@@ -159,9 +171,11 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
     return Scaffold(
-      appBar: widget.title == "" ? null : CustomWidget.BuildAppBar(widget.title, context),
+      appBar: widget.title == ""
+          ? null
+          : CustomWidget.BuildAppBar(widget.title, context),
       body: Center(
         child: buildBody(),
       ),
@@ -175,8 +189,8 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
 
     DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
 
-    String dateStr =
-    formatDate(dateTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
+    String dateStr = formatDate(dateTime.add(Duration(hours: 8)),
+        [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
 
     return Container(
       color: Colors.white,
@@ -277,7 +291,9 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                       Text(
                         strategy.profit.toString(),
                         style: TextStyle(
-                            color: strategy.profit.toString().indexOf("-") != -1 ? Colors.green: Colors.red,
+                            color: strategy.profit.toString().indexOf("-") != -1
+                                ? Colors.green
+                                : Colors.red,
                             fontWeight: FontWeight.w600),
                       ),
                       Padding(padding: EdgeInsets.all(10)),
@@ -291,7 +307,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                   child: RaisedButton(
                     textColor: Colors.white,
                     onPressed: () {
-                      ShellStrategy(strategy);
+                      _ShellStrategy(strategy);
                     },
                     highlightColor: UIData.primary_color,
                     child: Text("卖出"),
@@ -310,7 +326,8 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                 children: <Widget>[
                   buildCell("买入时间", dateStr),
                   buildCell("交易单号", strategy.Detail.orderNo),
-                  buildCell("保证金", (strategy.Detail.creditAmount).toString() + "元"),
+                  buildCell(
+                      "保证金", (strategy.Detail.creditAmount).toString() + "元"),
                   buildCell("止损线", strategy.Detail.stopLoss.toString() + "元"),
                   buildCell("浮动赢亏比", strategy.Detail.floatProfit.toString()),
                   Container(
@@ -330,7 +347,12 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                               Text(
                                 " " + strategy.profit.toString(),
                                 style: TextStyle(
-                                    color: strategy.profit.toString().indexOf("-") != -1 ? Colors.green: Colors.red,
+                                    color: strategy.profit
+                                                .toString()
+                                                .indexOf("-") !=
+                                            -1
+                                        ? Colors.green
+                                        : Colors.red,
                                     fontWeight: FontWeight.w600),
                               ),
                             ],
@@ -387,67 +409,76 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     );
   }
 
-  // Future<void> _handleRefresh() {
-  //   final Completer<void> completer = Completer<void>();
-  //   Timer(const Duration(seconds: 1), () {
-  //     completer.complete();
-  //   });
-  //   return completer.future.then<void>((_) {
-  //     loadData(REFRESH_REQIEST);
-  //   });
-  // }
-
   // ignore: non_constant_identifier_names
-  void ShellStrategy(Strategy strategy) {
+  void _ShellStrategy(Strategy strategy) {
     DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
-    if (DateTime.now().day == dateTime.day && DateTime.now().month == dateTime.month) {
+    if (DateTime.now().day == dateTime.day &&
+        DateTime.now().month == dateTime.month) {
       ShowToast("当天买入的股票下个工作日才能交易");
       return;
     }
-    this._showDialog(strategy);
+    this.ShowSellDialog(strategy);
   }
 
-  void _showDialog(Strategy strategy) {
-
-    DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
-    String dateStr =
-    formatDate(dateTime.add(Duration(hours: 8)), [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
-
-    var content = Container(
-      height: 200,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text("交易品种: " + strategy.stockName + "(" + strategy.stockCode + ")"),
-          Text("卖出数量: " + strategy.count.toString() + "股"),
-          Text("买入时间: " + dateStr ),
-          Text("浮动盈亏: " + strategy.profit.toString()+ " (仅供参考)"),
-        ],
-      ),
-    );
+  void ShowSellDialog(Strategy strategy) {
+  
+  DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
+    String dateStr = formatDate(dateTime.add(Duration(hours: 8)),
+        [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("确认卖出？"),
-          content: content,
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("取消", style: TextStyle(color: Colors.white),),
-              color: UIData.normal_font_color,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+          content: StatefulBuilder(builder: (context, StateSetter setState)  {
+            var pushing = false;
+            return Container(
+                    height: 200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text("交易品种: " + strategy.stockName + "(" + strategy.stockCode + ")"),
+                        Text("卖出数量: " + strategy.count.toString() + "股"),
+                        Text("买入时间: " + dateStr),
+                        Text("浮动盈亏: " + strategy.profit.toString() + " (仅供参考)"),
+                        pushing ? Container(
+            margin: EdgeInsets.only(top: 18),
+            width: 60.0,
+            height: 60.0,
+            alignment: FractionalOffset.center,
+            decoration: new BoxDecoration(
+                color: UIData.primary_color,
+                borderRadius:
+                    new BorderRadius.all(const Radius.circular(30.0))),
+            child: new CircularProgressIndicator(
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
             ),
-            new FlatButton(
-              child: new Text("确认",style: TextStyle(color: Colors.white),),
+          ): buildBottom(context, pushing, strategy)
+                      ],
+                    ),
+                  );
+          }),
+        );
+      },
+    );
+  }
+
+
+  Widget buildBottom(context, bool pushing, Strategy strategy) {
+    return Container(
+      height: 44,
+      width: 100,
+      margin: EdgeInsets.only(top:20),
+      child: new RaisedButton(
+              child: new Text(
+                "确认",
+                style: TextStyle(color: Colors.white),
+              ),
               color: UIData.primary_color,
               onPressed: () {
-                if (loading) return;
-                setState(() {
-                  loading = true;
-                });
+                if (pushing) return;
+                pushing = true;
                 User user = GetLocalUser();
                 var query = {
                   "uid": user.user_id,
@@ -455,6 +486,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                   "closeType": 1,
                 };
                 QueryShellStrategy(query).then((res) {
+                    pushing = false;
                   if (res.code == 1000) {
                     ShowToast("卖出成功");
                     loadData(REFRESH_REQIEST);
@@ -462,23 +494,15 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                   } else {
                     ShowToast(res.msg);
                   }
-                  setState(() {
-                    loading = false;
-                  });
+               
                 }).catchError((err) {
                   ShowToast("网络出错，请联系管理员");
-                  setState(() {
-                    loading = false;
-                  });
+                  pushing = false;
                 });
               },
             ),
-          ],
-        );
-      },
     );
   }
-
   //显示对话框 添加策略
   void showMyDialogWithStateBuilder(BuildContext context, String id) {
     var phoneController = TextEditingController();
@@ -486,6 +510,7 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
     showDialog(
         context: context,
         builder: (context) {
+          var pushing = false;
           return new AlertDialog(
             title: Text(
               "输入追加金额",
@@ -524,34 +549,29 @@ class MyStrategyPageState extends State<MyStrategyPage> with AutomaticKeepAliveC
                 child: new Text("确认", style: TextStyle(color: Colors.white)),
                 color: UIData.primary_color,
                 onPressed: () {
-                  if (loading) return;
-                  setState(() {
-                    loading = true;
-                  });
+                  if (pushing) return;
+                  pushing = true;
                   var price = phoneController.text.trim();
                   if (price.length == 0) {
                     ShowToast("请输入您要追加的金额");
                     return;
                   }
+                  User user = GetLocalUser();
                   var req = {
                     "uid": user.user_id,
                     "strategyId": id,
                     "creditAmount": double.parse(phoneController.text)
                   };
-                  AddCredit(req).then((res){
-                    setState(() {
-                      loading = false;
-                    });
+                  AddCredit(req).then((res) {
+                    pushing = false;
                     if (res.code == 1000) {
                       ShowToast("追加成功");
                       Navigator.of(context).pop();
-                    }else {
+                    } else {
                       ShowToast("操作失败");
                     }
                   }).catchError((err) {
-                    setState(() {
-                      loading = false;
-                    });
+                    pushing = false;
                   });
                 },
               ),

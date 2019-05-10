@@ -5,9 +5,11 @@ import 'package:fotune_app/MainPage.dart';
 import 'package:fotune_app/page/notfound/notfound_page.dart';
 import 'package:fotune_app/utils/UIData.dart';
 
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
   final materialApp = MaterialApp(
       title: UIData.appName,
       theme: new ThemeData(

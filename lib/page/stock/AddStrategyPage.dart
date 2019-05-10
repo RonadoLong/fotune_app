@@ -9,6 +9,7 @@ import 'package:fotune_app/api/strategy.dart';
 import 'package:fotune_app/model/UserInfo.dart';
 import 'package:fotune_app/page/Home/NewsDetailsPage.dart';
 import 'package:fotune_app/page/common/CommonWidget.dart';
+import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/page/stock/DiscoverWidget.dart';
 import 'package:fotune_app/page/stock/model/Setting.dart';
 import 'package:fotune_app/page/stock/model/Stock.dart';
@@ -46,6 +47,8 @@ class AddStrategyPageState extends State<AddStrategyPage> {
 
   int amount = 0;
   int stockCount = 0;
+
+  var bus = new EventBus();
 
   @override
   void initState() {
@@ -121,8 +124,7 @@ class AddStrategyPageState extends State<AddStrategyPage> {
     var amount = currentSelectedPrice * currentSelectedBeiShu;
 
     // 操盘资金 / 限价 = 股数
-    double count =
-        amount.ceilToDouble() / stock.current_prices / 100;
+    double count = amount.ceilToDouble() / stock.current_prices / 100;
 
     if (count >= 1) {
       stockCount = count.toInt() * 100;
@@ -130,8 +132,7 @@ class AddStrategyPageState extends State<AddStrategyPage> {
       stockCount = 0;
     }
     String liYong =
-        (stockCount * stock.current_prices / amount * 100)
-            .toStringAsFixed(2);
+        (stockCount * stock.current_prices / amount * 100).toStringAsFixed(2);
     double liYongCount = double.parse(liYong);
 
     return Scaffold(
@@ -147,8 +148,7 @@ class AddStrategyPageState extends State<AddStrategyPage> {
             },
           ),
         ),
-        body: Container(
-          color: Colors.white,
+        body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               buildContent(
@@ -194,7 +194,8 @@ class AddStrategyPageState extends State<AddStrategyPage> {
   Widget buildBottom() {
     return loading == false
         ? Container(
-            margin: EdgeInsets.only(top: 18),
+            width: MediaQuery.of(context).size.width - 100,
+            height: 40,
             child: RaisedButton(
               onPressed: () {
                 if (userInfo.amount == 0) {
@@ -220,7 +221,8 @@ class AddStrategyPageState extends State<AddStrategyPage> {
                   });
                   if (res.code == 1000) {
                     ShowToast("添加成功");
-                    handleRefresh((){
+                    bus.emit("refreshMineStrategyData", true);
+                    handleRefresh(() {
                       Navigator.of(context).pop();
                     });
                   } else {
@@ -234,13 +236,10 @@ class AddStrategyPageState extends State<AddStrategyPage> {
                 });
               },
               color: UIData.primary_color,
-              child: Container(
-                width: MediaQuery.of(context).size.width - 100,
-                child: Text(
-                  "提 交",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 15),
-                ),
+              child: Text(
+                "提 交",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 15),
               ),
             ),
           )

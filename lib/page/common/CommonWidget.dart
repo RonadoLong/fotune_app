@@ -62,3 +62,13 @@ Widget buildEmptyView() {
       todo();
     });
   }
+
+  Future<void> delayedfresh(Function todo) {
+    final Completer<void> completer = Completer<void>();
+    Future.delayed(Duration(seconds: 6), (){
+        completer.complete();
+    });
+    return completer.future.then<void>((_) {
+      todo();
+    });
+  }
