@@ -114,8 +114,8 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
     initData();
 
      Timer countdownTimer =  new Timer.periodic(new Duration(seconds: 5), (timer) {
-        print("time to TimeLine data");
-        print(timer.tick);
+        // print("time to TimeLine data");
+        // print(timer.tick);
         initData();
     });
    
