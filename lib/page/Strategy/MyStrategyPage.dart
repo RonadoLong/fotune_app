@@ -76,11 +76,6 @@ class MyStrategyPageState extends State<MyStrategyPage> {
       print("refreshMineStrategyData");
       loadData(REFRESH_REQIEST);
     });
-
-    // new Timer(Duration(seconds: 8), (){
-    //   print("time to refresh data");
-    //   loadData(REFRESH_REQIEST);
-    // });
   }
 
   loadData(int reqType) {
@@ -112,11 +107,12 @@ class MyStrategyPageState extends State<MyStrategyPage> {
             });
           }
         }
-
         handleRefresh(() {
-          setState(() {
-            isShowMore = true;
-          });
+          if (this.mounted) {
+            setState(() {
+              isShowMore = true;
+            });
+          }
         });
       }).catchError((err) {
         print(err);
@@ -421,8 +417,7 @@ class MyStrategyPageState extends State<MyStrategyPage> {
   }
 
   void ShowSellDialog(Strategy strategy) {
-  
-  DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
+    DateTime dateTime = DateTime.parse(strategy.Detail.buyTime);
     String dateStr = formatDate(dateTime.add(Duration(hours: 8)),
         [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss]);
     showDialog(
@@ -430,79 +425,85 @@ class MyStrategyPageState extends State<MyStrategyPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("确认卖出？"),
-          content: StatefulBuilder(builder: (context, StateSetter setState)  {
+          content: StatefulBuilder(builder: (context, StateSetter setState) {
             var pushing = false;
             return Container(
-                    height: 200,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text("交易品种: " + strategy.stockName + "(" + strategy.stockCode + ")"),
-                        Text("卖出数量: " + strategy.count.toString() + "股"),
-                        Text("买入时间: " + dateStr),
-                        Text("浮动盈亏: " + strategy.profit.toString() + " (仅供参考)"),
-                        pushing ? Container(
-            margin: EdgeInsets.only(top: 18),
-            width: 60.0,
-            height: 60.0,
-            alignment: FractionalOffset.center,
-            decoration: new BoxDecoration(
-                color: UIData.primary_color,
-                borderRadius:
-                    new BorderRadius.all(const Radius.circular(30.0))),
-            child: new CircularProgressIndicator(
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          ): buildBottom(context, pushing, strategy)
-                      ],
-                    ),
-                  );
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text("交易品种: " +
+                      strategy.stockName +
+                      "(" +
+                      strategy.stockCode +
+                      ")"),
+                  Text("卖出数量: " + strategy.count.toString() + "股"),
+                  Text("买入时间: " + dateStr),
+                  Text("浮动盈亏: " + strategy.profit.toString() + " (仅供参考)"),
+                  pushing
+                      ? Container(
+                          margin: EdgeInsets.only(top: 18),
+                          width: 60.0,
+                          height: 60.0,
+                          alignment: FractionalOffset.center,
+                          decoration: new BoxDecoration(
+                              color: UIData.primary_color,
+                              borderRadius: new BorderRadius.all(
+                                  const Radius.circular(30.0))),
+                          child: new CircularProgressIndicator(
+                            valueColor:
+                                new AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : buildBottom(context, pushing, strategy)
+                ],
+              ),
+            );
           }),
         );
       },
     );
   }
 
-
   Widget buildBottom(context, bool pushing, Strategy strategy) {
     return Container(
       height: 44,
       width: 100,
-      margin: EdgeInsets.only(top:20),
+      margin: EdgeInsets.only(top: 20),
       child: new RaisedButton(
-              child: new Text(
-                "确认",
-                style: TextStyle(color: Colors.white),
-              ),
-              color: UIData.primary_color,
-              onPressed: () {
-                if (pushing) return;
-                pushing = true;
-                User user = GetLocalUser();
-                var query = {
-                  "uid": user.user_id,
-                  "strategyID": strategy.Detail.orderNo,
-                  "closeType": 1,
-                };
-                QueryShellStrategy(query).then((res) {
-                    pushing = false;
-                  if (res.code == 1000) {
-                    ShowToast("卖出成功");
-                    loadData(REFRESH_REQIEST);
-                    Navigator.of(context).pop();
-                  } else {
-                    ShowToast(res.msg);
-                  }
-               
-                }).catchError((err) {
-                  ShowToast("网络出错，请联系管理员");
-                  pushing = false;
-                });
-              },
-            ),
+        child: new Text(
+          "确认",
+          style: TextStyle(color: Colors.white),
+        ),
+        color: UIData.primary_color,
+        onPressed: () {
+          if (pushing) return;
+          pushing = true;
+          User user = GetLocalUser();
+          var query = {
+            "uid": user.user_id,
+            "strategyID": strategy.Detail.orderNo,
+            "closeType": 1,
+          };
+          QueryShellStrategy(query).then((res) {
+            pushing = false;
+            if (res.code == 1000) {
+              ShowToast("卖出成功");
+              loadData(REFRESH_REQIEST);
+              Navigator.of(context).pop();
+            } else {
+              ShowToast(res.msg);
+            }
+          }).catchError((err) {
+            ShowToast("网络出错，请联系管理员");
+            pushing = false;
+          });
+        },
+      ),
     );
   }
+
   //显示对话框 添加策略
   void showMyDialogWithStateBuilder(BuildContext context, String id) {
     var phoneController = TextEditingController();

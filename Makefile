@@ -4,5 +4,5 @@ openIphone:
 runIphone:
 	flutter run -d iphone
 
-realease:
+release:
 	sh build.sh

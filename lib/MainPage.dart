@@ -7,6 +7,7 @@ import 'package:fotune_app/page/Profile/MinePage.dart';
 import 'package:fotune_app/page/stock/MarketPage.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:flustars/flustars.dart';
+
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,6 @@ class MainPageWidget extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPageWidget> {
-
-
   int _tabIndex = 0;
   var tabImages;
   var appBarTitles = ['首页', '自选', '策略', '我的'];
@@ -66,7 +65,6 @@ class MainPageState extends State<MainPageWidget> {
 
   void load() async {
     await SpUtil.getInstance();
-
   }
 
   void initData() {
@@ -120,14 +118,10 @@ class MainPageState extends State<MainPageWidget> {
             }).toList(),
           ),
         ),
-        //body表示具体展示的内容
         body: TabBarView(children: [HomePage(this.changeTab), HomeNewsPage()]),
       ),
     );
 
-    /*
-     * 三个子界面
-     */
     _pageList = [
       home,
       new MarketPage(),
@@ -137,7 +131,6 @@ class MainPageState extends State<MainPageWidget> {
   }
 
   void changeTab(int index) {
-
     setState(() {
       _tabIndex = index;
     });
@@ -147,7 +140,7 @@ class MainPageState extends State<MainPageWidget> {
   Widget build(BuildContext context) {
     //初始化数据
     initData();
-   
+
     return Scaffold(
         body: IndexedStack(
           index: _tabIndex,

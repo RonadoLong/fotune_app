@@ -24,10 +24,10 @@ dependencies:
   flutter_masked_text:
   flutter_localizations:
     sdk: flutter
-  flutter_webview_plugin: 0.3.4
+  flutter_webview_plugin: ^0.3.4
   date_format: ^1.0.5
   crypto: ^2.0.6
-  fluttertoast: ^3.0.0
+  fluttertoast: ^3.0.4
   flutter_refresh: ^0.0.2
   gbk2utf8: ^0.0.1
   flutter_html: ^0.9.6

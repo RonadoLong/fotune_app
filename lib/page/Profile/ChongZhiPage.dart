@@ -156,7 +156,7 @@ class ChongzhiDetail extends StatelessWidget {
     if (recharge.type == 0) {
       return Container(
         margin: EdgeInsets.all(8),
-        height: 200,
+        height: 300,
         child: Card(
             color: Colors.white,
             child: Container(

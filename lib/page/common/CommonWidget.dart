@@ -49,26 +49,24 @@ Widget buildEmptyView() {
   );
 }
 
-
-  Future<void> handleRefresh(Function todo) {
-    final Completer<void> completer = Completer<void>();
-    // Timer(const Duration(seconds: 1), () {
-    //   completer.complete();
-    // });
-    Future.delayed(Duration(seconds: 1), (){
-        completer.complete();
-    });
-    return completer.future.then<void>((_) {
+Future<void> handleRefresh(Function todo) {
+  final Completer<void> completer = Completer<void>();
+  Future.delayed(Duration(seconds: 1), () {
+    completer.complete();
+  });
+  return completer.future.then<void>((_) {
+    if (todo != null) {
       todo();
-    });
-  }
+    }
+  });
+}
 
-  Future<void> delayedfresh(Function todo) {
-    final Completer<void> completer = Completer<void>();
-    Future.delayed(Duration(seconds: 6), (){
-        completer.complete();
-    });
-    return completer.future.then<void>((_) {
-      todo();
-    });
-  }
+Future<void> delayedfresh(Function todo) {
+  final Completer<void> completer = Completer<void>();
+  Future.delayed(Duration(seconds: 6), () {
+    completer.complete();
+  });
+  return completer.future.then<void>((_) {
+    todo();
+  });
+}

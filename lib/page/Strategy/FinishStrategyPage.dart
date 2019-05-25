@@ -10,6 +10,7 @@ import 'package:fotune_app/utils/Constants.dart';
 import 'package:fotune_app/utils/UIData.dart';
 import 'package:date_format/date_format.dart';
 
+// ignore: must_be_immutable
 class FinishStrategyPage extends StatefulWidget {
   String title;
   FinishStrategyPage(title) {

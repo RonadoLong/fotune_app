@@ -28,8 +28,8 @@ class TiXianPageState extends State<TiXianPage> {
   @override
   void initState() {
     super.initState();
-  
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +57,8 @@ class TiXianPageState extends State<TiXianPage> {
             child: Column(
               children: <Widget>[
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(
+                      signed: false, decimal: true),
                   controller: priceController,
                   decoration: new InputDecoration(
                     hintText: "输入提现金额",

@@ -4,7 +4,6 @@ import 'package:fotune_app/api/HttpUtils.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
 import 'package:fotune_app/model/UserInfo.dart';
-import 'package:fotune_app/page/common/CommonWidget.dart';
 import 'package:fotune_app/page/common/EventBus.dart';
 import 'package:fotune_app/page/stock/AddStrategyPage.dart';
 import 'package:fotune_app/page/stock/SelectedWidget.dart';
@@ -49,30 +48,36 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
   int index = 1;
   Setting setting;
 
-  bool loading = false;
+  bool loading, running = false;
+  bool isShow, isCurrent = true;
 
   Iterable<Widget> get actorWidgets sync* {}
 
-  bool isShow = true;
-
-  bool isCurrent = true;
-
-  double scrY = AdaptUtils.px(350);
+  double scrY = 0;
 
   String code = "sz002230";
+  Timer countdownTimer;
 
   @override
   bool get wantKeepAlive => true;
-
   @protected
   final ScrollController _scrollController = new ScrollController();
+  @protected
+  final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(() {
       double offset = _scrollController.offset;
-      print(offset);
+      double pei = MediaQuery.of(context).size.height /
+          MediaQuery.of(context).size.width;
+      int w = 44;
+      if (pei >= 2) {
+        w = 54;
+      }
+      scrY = AdaptUtils.px(275) + MediaQuery.of(context).padding.top + w;
       flutterWebviewPlugin.resize(new Rect.fromLTWH(0.0, scrY - offset,
           MediaQuery.of(context).size.width, AdaptUtils.px(540)));
     });
@@ -84,19 +89,31 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
         });
       }
       if (arg) {
-        this.loadHTML();
+        loadHTML();
+        setState(() {
+          running = true;
+        });
       } else {
         flutterWebviewPlugin.dispose();
         flutterWebviewPlugin.close();
+        setState(() {
+          running = false;
+        });
       }
     });
 
     bus.on("changeTimeLineStatus", (arg) {
       if (arg && isCurrent) {
-        this.loadHTML();
+        loadHTML();
+        setState(() {
+          running = true;
+        });
       } else {
-        flutterWebviewPlugin.dispose();
         flutterWebviewPlugin.close();
+        flutterWebviewPlugin.dispose();
+        setState(() {
+          running = false;
+        });
       }
     });
 
@@ -113,12 +130,20 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
     initData();
 
-     Timer countdownTimer =  new Timer.periodic(new Duration(seconds: 5), (timer) {
-        // print("time to TimeLine data");
-        // print(timer.tick);
+    runTimer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void runTimer() {
+    countdownTimer = new Timer.periodic(new Duration(seconds: 5), (timer) {
+      if (running) {
         initData();
+      }
     });
-   
   }
 
   Container renderSearch() {
@@ -157,7 +182,6 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
                       MaterialPageRoute(
                           builder: (context) => StockSearchPage(true)))
                   .then((call) {
-                print(call);
                 if (call != null && call != "") {
                   setState(() {
                     code = call;
@@ -188,10 +212,16 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
     );
   }
 
-  final flutterWebviewPlugin = new FlutterWebviewPlugin();
-
   loadHTML() {
     if (context != null) {
+      double pei = MediaQuery.of(context).size.height /
+          MediaQuery.of(context).size.width;
+      int w = 44;
+      if (pei >= 2) {
+        w = 54;
+      }
+      scrY = AdaptUtils.px(275) + MediaQuery.of(context).padding.top + w;
+
       flutterWebviewPlugin.launch(
         url,
         clearCache: true,
@@ -205,6 +235,7 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     Widget body = stock == null
         ? Center(
             child: CircularProgressIndicator(),
@@ -379,12 +410,13 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
   // ignore: non_constant_identifier_names
   Widget TopMarket() {
-    return new Container(
+    Container topMarket = new Container(
       margin: new EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
       color: Colors.white,
       height: 30.0,
       child: ShowPrices(),
     );
+    return topMarket;
   }
 
   Future<Null> pullToRefresh() async {
@@ -412,7 +444,6 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
 
           url = "$host/api/client/marker/timeline/" + dealStocks.stock_code;
           flutterWebviewPlugin.reloadUrl(url);
-          
           sellList.add(SellAndBuy("卖5", stock.sell5, stock.sell5_apply_num));
           sellList.add(SellAndBuy("卖4", stock.sell4, stock.sell4_apply_num));
           sellList.add(SellAndBuy("卖3", stock.sell3, stock.sell3_apply_num));
