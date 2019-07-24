@@ -31,7 +31,7 @@ class MinePageState extends State<MinePage> {
     Icons.data_usage,
     Icons.data_usage,
   ];
-  var userAvatar = "https://image.showm.xin/wb/user/default-user-img5.png";
+  var userAvatar = "http://pfile.showm.xin/wb/user/default-user-img5.png";
   UserInfo userInfo;
 
   var rightArrowIcon = new Image.asset(

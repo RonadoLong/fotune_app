@@ -11,7 +11,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:usesCleartextTraffic="true"
-        android:label="财富通"
+        android:label="富通"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

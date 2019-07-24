@@ -123,7 +123,6 @@ Widget newNiuRenView(BuildContext context, List<NiuPeople> nius) {
 getNiuImage(String imgUrl) {
   return new CachedNetworkImage(
     imageUrl: imgUrl,
-    errorWidget: new Icon(Icons.error),
     fit: BoxFit.cover,
     height: 40.0,
     width: 40.0,
@@ -151,7 +150,6 @@ Widget buildNiuPeopleCell(NiuPeople niu) {
             CachedNetworkImage(
               imageUrl:
                   "http://gp.axinmama.com/public/static/home/img/moblie/icon_nr@2x4.png",
-              errorWidget: new Icon(Icons.error),
               fit: BoxFit.cover,
               height: 16.0,
               width: 30.0,
@@ -188,7 +186,6 @@ Widget buildNiuPeopleCell(NiuPeople niu) {
 getImage(String imgUrl) {
   return new CachedNetworkImage(
     imageUrl: imgUrl,
-    errorWidget: new Icon(Icons.error),
     fit: BoxFit.cover,
     height: 85.0,
     width: 110.0,

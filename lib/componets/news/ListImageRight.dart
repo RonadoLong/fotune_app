@@ -52,7 +52,6 @@ Widget ListImageRight(BuildContext context, News data) {
 getImage(String imgUrl) {
   return new CachedNetworkImage(
     imageUrl: imgUrl,
-    errorWidget: new Icon(Icons.error),
     fit: BoxFit.cover,
     height: 120.0,
     width: 110.0,

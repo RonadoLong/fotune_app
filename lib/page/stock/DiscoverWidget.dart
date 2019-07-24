@@ -191,7 +191,7 @@ Widget buildContent(
             },
             child: Container(
               margin: EdgeInsets.only(top: 12),
-              child: Text("《财富通投资人与点买人参与沪深A股交易合作协议》",
+              child: Text("《富通投资人与点买人参与沪深A股交易合作协议》",
                   style:
                   TextStyle(color: Colors.cyan, fontSize: 12)),
             ),
@@ -202,7 +202,7 @@ Widget buildContent(
             },
             child: Container(
               margin: EdgeInsets.only(top: 12),
-              child: Text("《财富通服务协议》",
+              child: Text("《富通服务协议》",
                   style:
                   TextStyle(color: Colors.cyan, fontSize: 12)),
             ),

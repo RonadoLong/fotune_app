@@ -82,8 +82,10 @@ class ChongZhiPageState extends State<ChongZhiPage> {
         name = "银行卡";
         imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/yl.png";
       } else if (recharge.type == 1) {
-        name = "微信";
-        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/wx.png";
+        // name = "微信";
+        // imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/wx.png";
+        name = "银联";
+        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/yl.png";
       } else {
         name = "支付宝";
         imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/zfb.png";
