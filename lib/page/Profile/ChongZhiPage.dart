@@ -80,15 +80,15 @@ class ChongZhiPageState extends State<ChongZhiPage> {
 
       if (recharge.type == 0) {
         name = "银行卡";
-        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/yl.png";
+        imgUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564124712778&di=0715bd70bb3d5732d7c1c2086cf3b5f0&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fq_70%2Cc_zoom%2Cw_640%2Fimages%2F20180623%2F0291d529afa3438e9b6c59364be96bcc.jpeg";
       } else if (recharge.type == 1) {
         // name = "微信";
         // imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/wx.png";
         name = "银联";
-        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/yl.png";
+        imgUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564124712778&di=0715bd70bb3d5732d7c1c2086cf3b5f0&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fq_70%2Cc_zoom%2Cw_640%2Fimages%2F20180623%2F0291d529afa3438e9b6c59364be96bcc.jpeg";
       } else {
         name = "支付宝";
-        imgUrl = "http://gp.axinmama.com/public/static/home/img/moblie/zfb.png";
+        imgUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564124830399&di=910db4851e6f6ddc730f525d9831c02b&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170703%2F2b4d688817e74dd9af3c720c5d9b4473_th.jpg";
       }
       return GestureDetector(
         onTap: () {
