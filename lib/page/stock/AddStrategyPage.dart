@@ -122,11 +122,9 @@ class AddStrategyPageState extends State<AddStrategyPage> {
     var priceController =
         new TextEditingController(text: '$currentSelectedPrice');
     var amount = currentSelectedPrice * currentSelectedBeiShu;
-
     // 操盘资金 / 限价 = 股数
     double count = amount.ceilToDouble() / stock.current_prices / 100;
-
-    if (count >= 1) {
+    if (!count.isNaN && count >= 1) {
       stockCount = count.toInt() * 100;
     } else {
       stockCount = 0;

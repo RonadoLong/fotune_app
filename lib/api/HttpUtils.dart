@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
+
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
-const PROHOST = "http://app.caifutong.live";
-const DEVHOST = "http://127.0.0.1:9527";
+const PROHOST = "https://cai.caifutong.live";
+const DEVHOST = "https://cai.caifutong.live";
 String host = inProduction ? PROHOST : PROHOST;
 
 class Http {
@@ -42,7 +43,7 @@ class Http {
       return options;
     }, onResponse: (Response response) {
       // 在返回响应数据之前做一些预处理
-  
+
       // print("InterceptorsWrapper ===== $response.data ");
       return response; // continue
     }, onError: (DioError e) {
@@ -57,7 +58,8 @@ class Http {
     print('get::: url：$url');
     Response response;
     try {
-      response = await _dio.get(url, queryParameters: data, cancelToken: cancelToken);
+      response =
+          await _dio.get(url, queryParameters: data, cancelToken: cancelToken);
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
         print('get请求取消! ' + e.message);
@@ -65,12 +67,12 @@ class Http {
         print('get请求发生错误：$e');
       }
     }
-    if (response != null){
+    if (response != null) {
       return response.data == null ? response : response.data;
     }
-     if (response.statusCode != 200) {
-          response.data = {"code": 200, "data":[], "msg": "网络出错"}; 
-      }
+    if (response.statusCode != 200) {
+      response.data = {"code": 200, "data": [], "msg": "网络出错"};
+    }
   }
 
   // post请求封装

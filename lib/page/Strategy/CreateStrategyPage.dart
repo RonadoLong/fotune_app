@@ -454,7 +454,7 @@ class CreateStrategyPageState extends State<CreateStrategyPage>
           buyList.add(SellAndBuy("买2", stock.buy2, stock.buy2_apply_num));
           buyList.add(SellAndBuy("买3", stock.buy3, stock.buy3_apply_num));
           buyList.add(SellAndBuy("买4", stock.buy4, stock.buy4_apply_num));
-          buyList.add(SellAndBuy("卖5", stock.buy5, stock.buy5_apply_num));
+          buyList.add(SellAndBuy("买5", stock.buy5, stock.buy5_apply_num));
         });
       }
 
