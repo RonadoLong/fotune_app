@@ -3,8 +3,8 @@ import 'package:fotune_app/api/user.dart';
 import 'package:fotune_app/model/User.dart';
 
 const bool inProduction = const bool.fromEnvironment("dart.vm.product");
-const PROHOST = "https://cai.caifutong.live";
-const DEVHOST = "https://cai.caifutong.live";
+const PROHOST = "http://cai.caifutong.live";
+const DEVHOST = "http://cai.caifutong.live";
 String host = inProduction ? PROHOST : PROHOST;
 
 class Http {
